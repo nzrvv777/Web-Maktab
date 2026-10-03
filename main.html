@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ҷадвали дарсҳо</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#07070a; --orange:#ff6a1a; --orange-2:#ffab40;
+    --text:#f2efe9; --muted:#8c8c94; --line:rgba(255,255,255,.09);
+    --glass:rgba(255,255,255,.05); --glass-brd:rgba(255,255,255,.12);
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+    box-sizing:border-box;
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; min-height:100%; background:var(--bg-0); color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,sans-serif; -webkit-font-smoothing:antialiased;
+    overflow-x:hidden; position:relative; transition:background .4s ease;
+  }
+  body::before{content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(900px 500px at 82% -8%, rgba(255,106,26,.18), transparent 60%),
+               radial-gradient(700px 500px at -10% 100%, rgba(255,106,26,.08), transparent 60%);
+    transition:opacity .4s ease;}
+
+  .ambient{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .ambient span{position:absolute; border-radius:50%; filter:blur(60px); opacity:.16; background:radial-gradient(circle,var(--orange),transparent 70%);}
+  .ambient span:nth-child(1){width:280px; height:280px; top:-60px; right:-40px; animation:drift1 26s ease-in-out infinite;}
+  .ambient span:nth-child(2){width:220px; height:220px; bottom:10%; left:-60px; animation:drift2 32s ease-in-out infinite;}
+  @keyframes drift1{0%,100%{transform:translate(0,0);} 50%{transform:translate(-30px,40px);}}
+  @keyframes drift2{0%,100%{transform:translate(0,0);} 50%{transform:translate(40px,-30px);}}
+
+  /* rain layer, only active in professional theme */
+  .rain{position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden; opacity:0; transition:opacity .6s ease;}
+  body.theme-pro .rain{opacity:1;}
+  body.theme-pro::before{opacity:.05;}
+  body.theme-pro{--bg-0:#05070a;}
+  body.theme-mono{--bg-0:#000000; --orange:#e7e7e7; --orange-2:#ffffff;}
+  body.theme-sunset{--bg-0:#180b10; --orange:#ff5f6d; --orange-2:#ffc371;}
+  body.transparent-bg{background:transparent !important;}
+  body.transparent-bg::before{opacity:0 !important;}
+  body.transparent-bg .ambient{display:none;}
+  body.transparent-bg .hero, body.transparent-bg .card, body.transparent-bg .profile-card,
+  body.transparent-bg .theme-card, body.transparent-bg .toggle-row, body.transparent-bg .gear,
+  body.transparent-bg .langs, body.transparent-bg .days button:not(.active),
+  body.transparent-bg .form input, body.transparent-bg .form select, body.transparent-bg .btn-ghost{
+    background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.16) !important;
+    backdrop-filter:blur(26px) saturate(180%) !important; -webkit-backdrop-filter:blur(26px) saturate(180%) !important;
+    box-shadow:none !important;
+  }
+  body.transparent-bg nav.tabbar{background:rgba(255,255,255,.05) !important; backdrop-filter:blur(26px) saturate(180%) !important; -webkit-backdrop-filter:blur(26px) saturate(180%) !important;}
+  .drop{position:absolute; top:-10%; width:1px; background:linear-gradient(to bottom, transparent, rgba(190,215,255,.55)); animation:fall linear infinite;}
+  @keyframes fall{to{transform:translateY(115vh);}}
+
+  @media (prefers-reduced-motion: reduce){.ambient span{animation:none;} .drop{animation:none; display:none;}}
+
+  .wrap{max-width:640px; margin:0 auto; padding:28px 18px 110px; position:relative; z-index:2;}
+
+  header{display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px; gap:10px;}
+  .brand{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:19px; letter-spacing:-.02em;}
+  .brand span{color:var(--orange);}
+  .brand .sub{display:block; font-size:12px; color:var(--muted); font-weight:500; margin-top:2px;}
+  .gear{width:38px; height:38px; border-radius:12px; border:1px solid var(--line); background:var(--glass);
+    backdrop-filter:blur(14px); color:var(--text); font-size:16px; cursor:pointer; flex-shrink:0;}
+  .backbtn{border:none; background:none; color:var(--muted); font-size:13px; font-weight:600; cursor:pointer; padding:0; display:flex; align-items:center; gap:4px;}
+
+  .days{display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; margin-bottom:18px; scrollbar-width:none;}
+  .days::-webkit-scrollbar{display:none;}
+  .days button{flex-shrink:0; border:1px solid var(--line); background:var(--glass); color:var(--text);
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600; padding:9px 14px; border-radius:12px; cursor:pointer;}
+  .days button.active{background:linear-gradient(135deg,var(--orange),var(--orange-2)); color:#0a0a0a; border-color:transparent;}
+  .days button.today-marker::after{content:"•"; color:var(--orange); margin-left:4px;}
+  .days button.active.today-marker::after{color:#0a0a0a;}
+
+  .hero{position:relative; border-radius:24px; padding:24px 22px;
+    background:linear-gradient(155deg, rgba(255,106,26,.16), rgba(255,255,255,.04) 55%);
+    border:1px solid var(--glass-brd); backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%);
+    box-shadow:0 30px 60px -30px rgba(255,106,26,.35), inset 0 1px 0 rgba(255,255,255,.08);
+    transform-style:preserve-3d; transition:transform .25s ease, background .4s ease; margin-bottom:20px; overflow:hidden;}
+  body.theme-pro .hero{background:rgba(255,255,255,.03); box-shadow:none;}
+  .hero::after{content:""; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(220px 120px at var(--mx,50%) var(--my,0%), rgba(255,255,255,.14), transparent 60%);}
+  .hero-label{font-size:12px; color:var(--orange-2); font-weight:600; display:flex; align-items:center; gap:7px;}
+  .dot{width:7px; height:7px; border-radius:50%; background:var(--orange); animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,106,26,.55);} 70%{box-shadow:0 0 0 10px rgba(255,106,26,0);} 100%{box-shadow:0 0 0 0 rgba(255,106,26,0);}}
+  .hero-subject{font-family:'Space Grotesk',sans-serif; font-size:27px; font-weight:600; margin:9px 0 2px; letter-spacing:-.01em;}
+  .hero-room{color:var(--muted); font-size:13px; margin-bottom:18px;}
+  .timer-row{display:flex; align-items:flex-end; justify-content:space-between; gap:14px;}
+  .timer{font-family:'Space Grotesk',sans-serif; font-size:40px; font-weight:700; line-height:1; letter-spacing:-.02em;}
+  .timer small{font-size:13px; color:var(--muted); font-weight:500; display:block; margin-bottom:5px;}
+  .progress{flex:1; height:6px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; margin-left:8px; align-self:center;}
+  .progress-bar{height:100%; border-radius:99px; background:linear-gradient(90deg,var(--orange),var(--orange-2)); width:0%; transition:width 1s linear;}
+
+  .section-label{font-size:12px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin:22px 2px 10px;}
+  .list{display:flex; flex-direction:column; gap:9px;}
+  .card{position:relative; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 17px; border-radius:14px;
+    background:var(--glass); border:1px solid var(--line); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    transition:transform .2s ease, border-color .2s ease, background .4s ease;}
+  body.theme-pro .card{background:rgba(255,255,255,.02);}
+  .card:hover{transform:translateY(-2px); border-color:var(--glass-brd);}
+  .card.now{border-color:rgba(255,106,26,.5); background:rgba(255,106,26,.08); position:sticky; top:8px; z-index:3; box-shadow:0 10px 24px -10px rgba(0,0,0,.5);}
+  .card.done{opacity:.4;}
+  .lname{font-size:14px; font-weight:600; letter-spacing:-.005em; min-width:0;}
+  .lname b{color:var(--orange-2); font-weight:700; margin-right:4px;}
+  .ltime{font-size:12px; color:var(--muted); text-align:right; white-space:nowrap; flex-shrink:0; font-variant-numeric:tabular-nums;}
+  .card.now .ltime{color:var(--orange-2); font-weight:600;}
+
+  .placeholder-note{color:var(--muted); font-size:13px; text-align:center; padding:30px 10px;}
+
+  /* settings */
+  .setting-block{margin-bottom:26px;}
+  .setting-title{font-size:12px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px;}
+  .langs{display:flex; gap:4px; background:var(--glass); border:1px solid var(--line); border-radius:11px; padding:3px; width:fit-content;}
+  .langs button{border:none; background:transparent; color:var(--muted); font-size:12px; font-weight:600;
+    padding:7px 12px; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;}
+  .langs button.active{background:var(--orange); color:#0a0a0a;}
+  .theme-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .theme-card{border:1px solid var(--line); background:var(--glass); border-radius:16px; padding:14px; cursor:pointer; text-align:left;}
+  .theme-card.active{border-color:var(--orange); background:rgba(255,106,26,.08);}
+  .theme-swatch{height:38px; border-radius:10px; margin-bottom:9px;}
+  .theme-name{font-size:13px; font-weight:600;}
+  .toggle-row{display:flex; align-items:center; justify-content:space-between; padding:13px 15px; border-radius:14px;
+    background:var(--glass); border:1px solid var(--line);}
+  .switch{width:42px; height:24px; border-radius:99px; background:rgba(255,255,255,.12); position:relative; cursor:pointer; flex-shrink:0;}
+  .switch::after{content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:transform .2s ease;}
+  .switch.on{background:var(--orange);}
+  .switch.on::after{transform:translateX(18px);}
+
+  /* profile */
+  .profile-card{border-radius:22px; padding:26px 22px; text-align:center;
+    background:linear-gradient(155deg, rgba(255,106,26,.14), rgba(255,255,255,.04) 60%);
+    border:1px solid var(--glass-brd); backdrop-filter:blur(20px); transition:background .4s ease;}
+  body.theme-pro .profile-card{background:rgba(255,255,255,.03);}
+  .avatar-big{width:72px; height:72px; border-radius:50%; margin:0 auto 14px; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,var(--orange),var(--orange-2)); font-size:30px;}
+  .profile-name{font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:600;}
+  .profile-meta{color:var(--muted); font-size:13px; margin-top:3px;}
+  .actions-row{display:flex; gap:10px; margin-top:18px;}
+  .btn{flex:1; padding:13px; border-radius:13px; border:none; font-size:13px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;}
+  .btn-primary{background:linear-gradient(135deg,var(--orange),var(--orange-2)); color:#0a0a0a;}
+  .btn-ghost{background:var(--glass); border:1px solid var(--line); color:var(--text);}
+  .form{display:flex; flex-direction:column; gap:10px; margin-top:18px; text-align:left;}
+  .form label{font-size:12px; color:var(--muted); font-weight:600; margin-bottom:4px; display:block;}
+  .form input, .form select{width:100%; padding:11px 13px; border-radius:12px; background:rgba(255,255,255,.05);
+    border:1px solid var(--line); color:var(--text); font-size:14px; font-family:'Inter',sans-serif;}
+  .form input:disabled{opacity:.5;}
+  .form-row{display:flex; gap:10px;}
+  .form-row > div{flex:1;}
+  .hint{font-size:11px; color:var(--muted); margin-top:2px;}
+  .avatar-pick{display:flex; gap:8px; flex-wrap:wrap;}
+  .avatar-opt{width:42px; height:42px; border-radius:50%; border:2px solid transparent; background:rgba(255,255,255,.06);
+    display:flex; align-items:center; justify-content:center; font-size:19px; cursor:pointer;}
+  .avatar-opt.active{border-color:var(--orange);}
+
+  /* teachers / access */
+  .form textarea{width:100%; padding:11px 13px; border-radius:12px; background:rgba(255,255,255,.05);
+    border:1px solid var(--line); color:var(--text); font-size:13px; font-family:'Inter',sans-serif; min-height:74px; resize:vertical;}
+  .form select option{background:#15151a; color:#f2efe9;}
+  .chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{border:1px solid var(--line); background:var(--glass); color:var(--text); border-radius:99px; padding:6px 11px;
+    font-size:12px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;}
+  .chip.on{background:var(--orange); color:#0a0a0a; border-color:transparent;}
+  .card.tcard{flex-wrap:wrap; align-items:flex-start;}
+  .tsubj{font-size:12px; color:var(--muted); text-align:right; max-width:52%; line-height:1.4;}
+  .tactions{flex-basis:100%; display:flex; gap:8px; justify-content:flex-end;}
+  .tactions .btn{flex:0 0 auto; padding:7px 13px;}
+  .err{font-size:12px; color:#ff8f8f; min-height:0;}
+  .note{font-size:12px; color:var(--muted); margin:-6px 2px 14px; line-height:1.5;}
+  body.transparent-bg .form textarea, body.transparent-bg .chip:not(.on){background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.16) !important;}
+
+  footer{text-align:center; color:var(--muted); font-size:11px; margin-top:30px; line-height:1.6;}
+  .view{display:none;} .view.active{display:block;}
+
+  nav.tabbar{position:fixed; left:0; right:0; bottom:0; z-index:5; padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));
+    background:rgba(10,10,12,.62); backdrop-filter:blur(20px) saturate(160%); -webkit-backdrop-filter:blur(20px) saturate(160%);
+    border-top:1px solid var(--line); transition:background .4s ease;}
+  body.theme-pro nav.tabbar{background:rgba(10,10,12,.28);}
+  .tabbar-inner{max-width:640px; margin:0 auto; display:flex; justify-content:space-around;}
+  .tab{background:none; border:none; color:var(--muted); font-family:'Inter',sans-serif; font-size:10.5px; font-weight:600;
+    display:flex; flex-direction:column; align-items:center; gap:3px; padding:4px 10px; cursor:pointer; border-radius:12px; transition:color .2s ease, transform .15s ease;}
+  .tab .ic{font-size:20px; transition:transform .2s ease;}
+  .tab.active{color:var(--orange-2);}
+  .tab.active .ic{transform:translateY(-2px) scale(1.08);}
+  @media (prefers-reduced-motion: reduce){.card,.hero,.tab,.tab .ic{transition:none;}}
+
+  @media (min-width:860px){
+    .wrap{max-width:760px; margin-left:104px; padding-bottom:40px;}
+    nav.tabbar{left:0; right:auto; top:0; bottom:0; width:84px; height:100vh;
+      border-top:none; border-right:1px solid var(--line); padding:28px 8px;}
+    .tabbar-inner{flex-direction:column; justify-content:flex-start; gap:30px; height:100%;}
+    .tab{flex-direction:column;}
+  }
+
+  /* faq */
+  .faq details{border:1px solid var(--line); background:var(--glass); border-radius:14px; margin-bottom:8px; overflow:hidden;}
+  .faq summary{list-style:none; cursor:pointer; padding:13px 15px; font-size:14px; font-weight:600; display:flex; justify-content:space-between; gap:10px; align-items:center;}
+  .faq summary::-webkit-details-marker{display:none;}
+  .faq summary::after{content:"+"; color:var(--orange-2); font-size:18px; line-height:1; flex-shrink:0;}
+  .faq details[open] summary::after{content:"\2013";}
+  .faq p{margin:0; padding:0 15px 14px; font-size:13px; line-height:1.55; color:var(--muted);}
+  body.transparent-bg .faq details{background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.16) !important; backdrop-filter:blur(26px) saturate(180%) !important; -webkit-backdrop-filter:blur(26px) saturate(180%) !important;}
+
+  /* ===== screen sizes (по заметкам) =====
+     Телефоны: 320 mini | 360 обычные | 390 большие | 430 очень большие
+     Планшеты: 600 | 768 | 834 | 1024
+     ПК: 1280 | 1366 | 1920 | 2560 | 3840      ТВ: 1280x720 HD | 1920x1080 FHD | 3840x2160 4K | 7680x4320 8K */
+  /* телефоны: время урока переносится под название, чтобы не налезало */
+  @media (max-width:479px){
+    .card:not(.tcard){flex-wrap:wrap; gap:3px 12px;}
+    .card:not(.tcard) .lname{flex:1 1 auto;}
+    .card:not(.tcard) .ltime{flex-basis:100%; text-align:left; white-space:normal;}
+  }
+  @media (max-width:359px){
+    .wrap{padding:20px 12px 104px;}
+    .brand{font-size:17px;}
+    .hero{padding:18px 16px; border-radius:20px;}
+    .hero-subject{font-size:22px;}
+    .timer{font-size:32px;}
+    .card{padding:12px 13px; gap:10px;}
+    .lname{font-size:13px;}
+    .ltime{font-size:11px;}
+    .days button{padding:8px 11px; font-size:12px;}
+    .tab{padding:4px 6px; font-size:10px;}
+    .theme-grid{gap:8px;}
+    .tsubj{max-width:46%;}
+  }
+  @media (min-width:430px) and (max-width:599px){
+    .wrap{padding:30px 22px 112px;}
+    .hero-subject{font-size:29px;}
+  }
+  @media (min-width:600px) and (max-width:859px){
+    .wrap{max-width:680px; padding:36px 28px 124px;}
+    .brand{font-size:22px;}
+    .hero{padding:30px 28px; border-radius:28px;}
+    .hero-subject{font-size:32px;}
+    .timer{font-size:48px;}
+    .card{padding:16px 20px;}
+    .lname{font-size:15px;}
+    .ltime{font-size:13px;}
+    .days button{font-size:14px; padding:10px 16px;}
+    .tab{font-size:11.5px; padding:4px 16px;}
+    .theme-grid{grid-template-columns:repeat(4,1fr);}
+  }
+  @media (min-width:768px) and (max-width:859px){
+    .wrap{max-width:720px;}
+  }
+  @media (min-width:1024px){
+    .wrap{max-width:800px;}
+    .hero-subject{font-size:30px;}
+    .timer{font-size:44px;}
+    .theme-grid{grid-template-columns:repeat(4,1fr);}
+  }
+  @media (min-width:1280px){
+    .wrap{max-width:860px; margin-left:auto; margin-right:auto;}
+  }
+  @media (min-width:1280px) and (max-height:760px){
+    .wrap{padding-top:18px;}
+    .tabbar-inner{gap:16px;}
+    nav.tabbar{padding:14px 8px;}
+    .hero{padding:18px 22px; margin-bottom:14px;}
+  }
+  /* большие экраны и ТВ: масштабируем интерфейс целиком */
+  @media (min-width:1920px){ .wrap, nav.tabbar{zoom:1.25;} nav.tabbar{height:auto;} }
+  @media (min-width:2560px){ .wrap, nav.tabbar{zoom:1.6;} }
+  @media (min-width:3840px){ .wrap, nav.tabbar{zoom:2.4;} }
+  @media (min-width:7680px){ .wrap, nav.tabbar{zoom:4.8;} }
+
+  /* focus list, teachers file, about */
+  .card.dim{opacity:.58;}
+  .card.tcard .lname{flex:1 1 0; min-width:0;}
+  .card.tcard .tsubj{flex:0 1 50%; min-width:0; overflow-wrap:anywhere;}
+  .card.now{background:linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.08)), rgba(255,106,26,.10);}
+  .tphone{font-size:12px; font-weight:500; margin-top:3px;}
+  .tphone a{color:var(--orange-2); text-decoration:none;}
+  .linkbtn{background:none; border:none; color:var(--muted); font-size:12px; font-weight:600; cursor:pointer; padding:12px 0; width:100%; text-align:center; font-family:'Inter',sans-serif;}
+  .about-row{display:flex; justify-content:space-between; gap:12px; padding:12px 15px; border-radius:14px; background:var(--glass); border:1px solid var(--line); margin-bottom:8px; font-size:14px;}
+  .about-row span:last-child{color:var(--muted); text-align:right;}
+  .about-row a{color:var(--orange-2); text-decoration:none;}
+  body.transparent-bg .about-row{background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.16) !important; backdrop-filter:blur(26px) saturate(180%) !important; -webkit-backdrop-filter:blur(26px) saturate(180%) !important;}
+
+  /* roles / access */
+  .role-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px; text-align:left;}
+  .role-card{display:flex; flex-direction:column; gap:4px; padding:16px 14px; border-radius:16px; border:1px solid var(--line); background:var(--glass); color:var(--text); cursor:pointer; font-family:'Inter',sans-serif; text-align:left;}
+  .role-card:hover{border-color:var(--orange);}
+  .role-card .ri{font-size:26px;}
+  .role-card .rn{font-size:14px; font-weight:700;}
+  .role-card .rd{font-size:11px; color:var(--muted); line-height:1.4;}
+  .rolebadge{font-size:13px; font-weight:600; color:var(--orange-2); margin-bottom:14px; display:flex; gap:6px; align-items:center; justify-content:center; flex-wrap:wrap;}
+  .linkbtn.inline{width:auto; padding:0; display:inline; text-decoration:underline; color:var(--muted);}
+  .codebox{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:22px; font-weight:700; letter-spacing:.12em; text-align:center; padding:14px; border-radius:14px; border:1px dashed var(--orange); color:var(--orange-2); margin:8px 0; user-select:all; word-break:break-all;}
+  .mono-out{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px;}
+  .t-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 14px; border-radius:12px; background:var(--glass); border:1px solid var(--line); margin-bottom:8px; font-size:14px;}
+  .t-row small{display:block; color:var(--muted); font-size:12px; margin-top:2px;}
+  body.transparent-bg .t-row{background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.16) !important;}
+  .sub-title{font-size:12px; color:var(--muted); font-weight:600; margin:18px 2px 8px;}
+  body.transparent-bg .role-card{background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.16) !important; backdrop-filter:blur(26px) saturate(180%) !important; -webkit-backdrop-filter:blur(26px) saturate(180%) !important;}
+
+  /* ===== avatars: svg icons + upload ===== */
+  .avatar-big{color:#1b0f06; overflow:hidden;}
+  .avatar-big .av-svg{width:38px; height:38px;}
+  .avatar-big .av-img, .avatar-opt .av-img{width:100%; height:100%; object-fit:cover; display:block; border-radius:50%;}
+  .avatar-opt{color:var(--text); padding:0; overflow:hidden; font-family:inherit; transition:transform .2s ease, border-color .2s ease, background .2s ease, color .2s ease;}
+  .avatar-opt .av-svg{width:21px; height:21px;}
+  .avatar-opt:hover{transform:translateY(-2px); background:rgba(255,255,255,.1);}
+  .avatar-opt:active{transform:scale(.92);}
+  .avatar-opt.active{border-color:var(--orange); background:rgba(255,106,26,.14); color:var(--orange-2);}
+  @property --ang{syntax:"<angle>"; initial-value:0deg; inherits:false;}
+  .avatar-opt.avatar-add{border:2px solid transparent; color:var(--orange-2); overflow:visible;
+    background:linear-gradient(var(--bg-0),var(--bg-0)) padding-box, conic-gradient(from var(--ang), var(--orange), var(--orange-2), rgba(255,255,255,.08) 38%, var(--orange)) border-box;
+    animation:spinRing 4.5s linear infinite; box-shadow:0 0 14px -4px var(--orange);}
+  .avatar-opt.avatar-add svg{width:20px; height:20px; transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+  .avatar-opt.avatar-add:hover svg{transform:rotate(90deg) scale(1.15);}
+  @keyframes spinRing{to{--ang:360deg;}}
+
+  /* ===== password eye ===== */
+  .pw{position:relative;}
+  .pw input{padding-right:50px !important;}
+  .pw-eye{position:absolute; right:6px; top:50%; transform:translateY(-50%); width:38px; height:38px; border:none; background:none; color:var(--muted);
+    border-radius:11px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; transition:color .2s ease, background .2s ease, transform .15s ease;}
+  .pw-eye:hover{color:var(--text); background:rgba(255,255,255,.07);}
+  .pw-eye:active{transform:translateY(-50%) scale(.86);}
+  .pw-eye svg{width:21px; height:21px; overflow:visible;}
+  .pw-eye .lid{transform-box:fill-box; transform-origin:center;}
+  .pw-eye .pupil{transform-box:fill-box; transform-origin:center; transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+  .pw-eye .slash{stroke-dasharray:23; stroke-dashoffset:23; transition:stroke-dashoffset .3s cubic-bezier(.4,0,.2,1);}
+  .pw-eye.on{color:var(--orange-2);}
+  .pw-eye.on .slash{stroke-dashoffset:0;}
+  .pw-eye.on .pupil{transform:scale(.72);}
+  .pw-eye.blink .lid{animation:eyeBlink .34s ease;}
+  @keyframes eyeBlink{0%{transform:scaleY(1);} 45%{transform:scaleY(.08);} 100%{transform:scaleY(1);}}
+
+  /* ===== FAQ accordion ===== */
+  .faq-head{display:flex; align-items:center; justify-content:space-between; width:100%; background:none; border:none; padding:0 2px; margin-bottom:10px; cursor:pointer;
+    color:var(--muted); font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-family:'Inter',sans-serif; transition:color .25s ease;}
+  .faq-head.open{color:var(--orange-2);}
+  .faq-chev{flex-shrink:0; width:8px; height:8px; margin:0 4px 3px 8px; border-right:2px solid currentColor; border-bottom:2px solid currentColor; transform:rotate(45deg); transition:transform .38s cubic-bezier(.4,0,.2,1);}
+  .faq-head.open .faq-chev{transform:rotate(-135deg) translate(-2px,-2px);}
+  .faq-wrap{display:grid; grid-template-rows:0fr; transition:grid-template-rows .5s cubic-bezier(.4,0,.2,1);}
+  .faq-wrap.open{grid-template-rows:1fr;}
+  .faq-wrap > #faqList{overflow:hidden; min-height:0;}
+  .faq-item{border:1px solid var(--line); background:var(--glass); border-radius:14px; margin-bottom:8px; opacity:0; transform:translateY(-10px);
+    transition:opacity .35s ease, transform .4s cubic-bezier(.22,1,.36,1), border-color .25s ease;}
+  .faq-wrap.open .faq-item{opacity:1; transform:none; transition-delay:calc(var(--i) * 60ms + 120ms), calc(var(--i) * 60ms + 120ms), 0s;}
+  .faq-item.open{border-color:rgba(255,106,26,.45);}
+  .faq-q{display:flex; width:100%; justify-content:space-between; align-items:center; gap:10px; background:none; border:none; color:var(--text); padding:13px 15px;
+    font-size:14px; font-weight:600; text-align:left; cursor:pointer; font-family:'Inter',sans-serif;}
+  .faq-item.open .faq-chev{transform:rotate(-135deg) translate(-2px,-2px); color:var(--orange-2);}
+  .faq-a{display:grid; grid-template-rows:0fr; transition:grid-template-rows .38s cubic-bezier(.4,0,.2,1);}
+  .faq-item.open .faq-a{grid-template-rows:1fr;}
+  .faq-a > div{overflow:hidden; min-height:0;}
+  .faq-a p{margin:0; padding:0 15px 14px; font-size:13px; line-height:1.55; color:var(--muted); opacity:0; transform:translateY(-4px); transition:opacity .3s ease .08s, transform .3s ease .08s;}
+  .faq-item.open .faq-a p{opacity:1; transform:none;}
+  body.transparent-bg .faq-item{background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.16) !important; backdrop-filter:blur(26px) saturate(180%) !important; -webkit-backdrop-filter:blur(26px) saturate(180%) !important;}
+  @media (prefers-reduced-motion: reduce){ .faq-wrap,.faq-item,.faq-a,.faq-a p,.faq-chev,.pw-eye .slash,.pw-eye .pupil{transition:none;} .avatar-opt.avatar-add{animation:none;} .pw-eye.blink .lid{animation:none;} }
+
+  /* ===== role card (saved) ===== */
+  .role-card.saved{border-color:var(--orange); background:rgba(255,106,26,.10);}
+
+  /* ===== glass tab bar ===== */
+  .tabbar-inner{position:relative;}
+  .tab{position:relative; z-index:1; padding:11px 12px 7px;}
+  .tab-pill{position:absolute; left:0; top:0; width:0; height:0; border-radius:22px; pointer-events:none; z-index:0; opacity:0;
+    background:linear-gradient(170deg, rgba(255,255,255,.24) 0%, rgba(255,255,255,.09) 50%, rgba(255,190,110,.14) 100%);
+    border:1px solid rgba(255,255,255,.26);
+    box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5), inset 0 -1px 0 rgba(255,255,255,.12), inset 0 0 18px rgba(255,255,255,.05), 0 10px 26px -10px rgba(0,0,0,.65);
+    backdrop-filter:blur(7px) saturate(220%) brightness(1.32) contrast(1.05); -webkit-backdrop-filter:blur(7px) saturate(220%) brightness(1.32) contrast(1.05);
+    transition:transform .55s cubic-bezier(.34,1.32,.64,1), width .55s cubic-bezier(.34,1.32,.64,1), height .55s cubic-bezier(.34,1.32,.64,1), opacity .25s ease;}
+  .tab-pill.ready{opacity:1;}
+  .tab-pill::after{content:""; position:absolute; inset:1px; border-radius:inherit; pointer-events:none;
+    background:radial-gradient(90% 60% at 30% 0%, rgba(255,255,255,.30), transparent 62%);}
+  .tab.active .ic{transform:translateY(1px) scale(1.2);}
+  .tab .ic{transition:transform .45s cubic-bezier(.34,1.56,.64,1);}
+  body.theme-mono .tab-pill{border-color:rgba(255,255,255,.4);}
+  @media (prefers-reduced-motion: reduce){ .tab-pill{transition:opacity .2s ease;} }
+
+  /* ===== smooth view switching ===== */
+  .view.slide-r{animation:viewInR .46s cubic-bezier(.22,1,.36,1) both;}
+  .view.slide-l{animation:viewInL .46s cubic-bezier(.22,1,.36,1) both;}
+  @keyframes viewInR{from{opacity:0; transform:translateX(38px) scale(.985);} to{opacity:1; transform:none;}}
+  @keyframes viewInL{from{opacity:0; transform:translateX(-38px) scale(.985);} to{opacity:1; transform:none;}}
+  @media (prefers-reduced-motion: reduce){ .view.slide-r,.view.slide-l{animation:none;} }
+
+  /* ===== splash ===== */
+  #splash{position:fixed; inset:0; z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px;
+    background:radial-gradient(700px 420px at 50% 38%, rgba(255,106,26,.22), transparent 60%), #07070a;
+    transition:opacity .55s ease, transform .55s ease, visibility .55s;}
+  #splash.sp-out{opacity:0; transform:scale(1.06); visibility:hidden; pointer-events:none;}
+  body.splashing{overflow:hidden;}
+  .sp-glow{position:absolute; width:280px; height:280px; border-radius:50%; background:radial-gradient(circle, rgba(255,106,26,.38), transparent 65%); animation:spGlow 2s ease-in-out infinite; pointer-events:none;}
+  .sp-icon{position:relative; width:104px; height:104px; border-radius:30px; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,#ff6a1a,#ffab40); box-shadow:0 22px 50px -12px rgba(255,106,26,.65), inset 0 1px 0 rgba(255,255,255,.5);
+    animation:spPop .8s cubic-bezier(.34,1.56,.64,1) both, spFloat 2.4s ease-in-out .8s infinite;}
+  .sp-icon svg{width:62px; height:62px;}
+  .sp-icon path{stroke-dasharray:100; stroke-dashoffset:100; animation:spDraw .9s cubic-bezier(.4,0,.2,1) .35s forwards;}
+  .sp-icon .sp-p2{animation-delay:.62s;} .sp-icon .sp-p3{animation-delay:.88s;}
+  .sp-name{position:relative; font-weight:700; font-size:20px; letter-spacing:-.01em; color:#f2efe9; opacity:0; animation:spFade .6s ease .7s forwards;}
+  .sp-bar{position:relative; width:120px; height:3px; border-radius:99px; background:rgba(255,255,255,.1); overflow:hidden; opacity:0; animation:spFade .4s ease .9s forwards;}
+  .sp-bar i{display:block; height:100%; width:40%; border-radius:99px; background:linear-gradient(90deg,#ff6a1a,#ffab40); animation:spBar 1.1s ease-in-out infinite;}
+  @keyframes spPop{from{transform:scale(.4); opacity:0;} to{transform:none; opacity:1;}}
+  @keyframes spFloat{0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);}}
+  @keyframes spDraw{to{stroke-dashoffset:0;}}
+  @keyframes spFade{to{opacity:1;}}
+  @keyframes spGlow{0%,100%{transform:scale(.85); opacity:.6;} 50%{transform:scale(1.1); opacity:1;}}
+  @keyframes spBar{0%{transform:translateX(-120%);} 100%{transform:translateX(320%);}}
+  @media (prefers-reduced-motion: reduce){ .sp-icon,.sp-glow,.sp-bar i{animation:none;} .sp-icon path{animation:none; stroke-dashoffset:0;} .sp-name,.sp-bar{animation:none; opacity:1;} #splash{transition:opacity .2s;} }
+
+  /* ===== confirm modal ===== */
+  .modal-back{position:fixed; inset:0; z-index:9000; display:flex; align-items:center; justify-content:center; padding:22px; background:rgba(0,0,0,.55); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); opacity:0; transition:opacity .22s ease;}
+  .modal-back.show{opacity:1;}
+  .modal{width:100%; max-width:340px; padding:22px; border-radius:22px; background:rgba(26,26,30,.96); border:1px solid var(--glass-brd); box-shadow:0 30px 70px -20px rgba(0,0,0,.8); transform:translateY(14px) scale(.95); transition:transform .32s cubic-bezier(.34,1.45,.64,1);}
+  .modal-back.show .modal{transform:none;}
+  .modal p{margin:0 0 18px; font-size:15px; line-height:1.5;}
+  .modal-actions{display:flex; gap:10px;}
+  .btn-danger{background:rgba(255,80,80,.14); border:1px solid rgba(255,80,80,.4); color:#ff9a9a;}
+
+  /* ===== dev chip ===== */
+  .devchip{position:fixed; z-index:8000; top:calc(5px + env(safe-area-inset-top,0px)); left:50%; transform:translateX(-50%); padding:5px 12px; border-radius:99px; border:1px solid rgba(255,106,26,.6);
+    background:rgba(255,106,26,.16); color:var(--orange-2); font-size:11px; font-weight:800; letter-spacing:.08em; cursor:pointer; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); font-family:'Inter',sans-serif;}
+  .devchip[hidden]{display:none;}
+
+  .wrap{overflow-x:clip;}
+  /* ===== locked sections ===== */
+  .gate{display:none; flex-direction:column; align-items:center; text-align:center; gap:12px; padding:42px 22px; margin-top:20px; border-radius:22px; border:1px solid var(--glass-brd);
+    background:linear-gradient(155deg, rgba(255,106,26,.12), rgba(255,255,255,.03) 60%); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);}
+  .view.locked > .gate{display:flex;}
+  .view.locked > :not(header):not(.gate){display:none !important;}
+  .view.locked .filter-wrap{display:none;}
+  .gate-ic{width:68px; height:68px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.07); border:1px solid var(--glass-brd); color:var(--orange-2); animation:gateFloat 3s ease-in-out infinite;}
+  .gate-ic svg{width:30px; height:30px;}
+  .gate-title{font-size:18px; font-weight:700;}
+  .gate-body{font-size:14px; color:var(--muted); line-height:1.5; max-width:300px;}
+  .gate .btn{margin-top:8px; width:100%; max-width:300px; flex:none;}
+  @keyframes gateFloat{0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);}}
+  .tab .ic{position:relative;}
+  .tab .lk{display:none; position:absolute; right:-8px; top:-5px; width:13px; height:13px; color:var(--orange-2);}
+  .tab .lk svg{width:13px; height:13px;}
+  .tab.locked .lk{display:block;}
+  .tab.locked{opacity:.8;}
+  @media (prefers-reduced-motion: reduce){ .gate-ic{animation:none;} }
+
+  /* ===== teachers: sort menu ===== */
+  .filter-wrap{position:relative; flex-shrink:0;}
+  .gear.active{border-color:var(--orange); color:var(--orange-2);}
+  .fdot{position:absolute; top:6px; right:6px; width:7px; height:7px; border-radius:50%; background:var(--orange); display:none;}
+  .gear.active .fdot{display:block;}
+  #sortBtn{position:relative; display:flex; align-items:center; justify-content:center; padding:0;}
+  .sort-menu{position:absolute; right:0; top:46px; min-width:236px; z-index:30; padding:8px; border-radius:16px; background:rgba(22,22,26,.94); border:1px solid var(--glass-brd);
+    backdrop-filter:blur(22px) saturate(160%); -webkit-backdrop-filter:blur(22px) saturate(160%); box-shadow:0 24px 50px -16px rgba(0,0,0,.7);
+    opacity:0; visibility:hidden; pointer-events:none; transform:translateY(-8px) scale(.95); transform-origin:top right;
+    transition:opacity .2s ease, transform .28s cubic-bezier(.34,1.4,.64,1), visibility .2s;}
+  .sort-menu.open{opacity:1; visibility:visible; pointer-events:auto; transform:none;}
+  .sm-title{font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.06em; padding:6px 10px 4px;}
+  .sm-item{display:flex; width:100%; align-items:center; justify-content:space-between; gap:10px; padding:10px; border:none; background:none; color:var(--text); font-size:14px; font-weight:500; border-radius:10px; cursor:pointer; text-align:left; font-family:'Inter',sans-serif;}
+  .sm-item:hover{background:rgba(255,255,255,.07);}
+  .sm-item svg{flex-shrink:0; width:16px; height:16px; opacity:0; transform:scale(.6); transition:opacity .2s ease, transform .25s cubic-bezier(.34,1.56,.64,1);}
+  .sm-item.on{color:var(--orange-2);}
+  .sm-item.on svg{opacity:1; transform:none;}
+  .tborn{font-size:11px; color:var(--muted); margin-top:2px; font-weight:500;}
+  @media (prefers-reduced-motion: reduce){ .sort-menu,.sm-item svg{transition:none;} }
+</style>
+</head>
+<body>
+<div id="splash" aria-hidden="true">
+  <div class="sp-glow"></div>
+  <div class="sp-icon"><svg viewBox="0 0 64 64" fill="none" stroke="#1b0f06" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path class="sp-p1" pathLength="100" d="M6 24 32 11l26 13-26 13z"/><path class="sp-p2" pathLength="100" d="M16 31v12c0 4 7 8 16 8s16-4 16-8V31"/><path class="sp-p3" pathLength="100" d="M58 24v16"/></svg></div>
+  <div class="sp-name">Ҷадвали дарсҳо</div>
+  <div class="sp-bar"><i></i></div>
+</div>
+<script>
+(function(){
+  var sp=document.getElementById("splash"); if(!sp) return;
+  document.body.classList.add("splashing");
+  var reduce=window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var MIN=reduce?500:1700, t0=Date.now(), gone=false;
+  function hide(){ if(gone) return; gone=true; sp.classList.add("sp-out"); document.body.classList.remove("splashing"); setTimeout(function(){ if(sp.parentNode) sp.parentNode.removeChild(sp); },700); }
+  var loaded=new Promise(function(r){ if(document.readyState==="complete") r(); else window.addEventListener("load",r,{once:true}); });
+  var fonts=(document.fonts && document.fonts.ready) ? document.fonts.ready.catch(function(){}) : Promise.resolve();
+  Promise.all([loaded,fonts]).then(function(){ setTimeout(hide, Math.max(0, MIN-(Date.now()-t0))); });
+  setTimeout(hide, 5000);   // страховка: заставка не зависнет
+})();
+</script>
+<div class="ambient"><span></span><span></span></div>
+<div class="rain" id="rainLayer"></div>
+<button class="devchip" id="devChip" type="button" hidden></button>
+<div class="wrap">
+
+  <div class="view active" id="view-home">
+    <header>
+      <div class="brand" id="brandTitle">Синфи 10<span> · гурӯҳи 15</span><span class="sub" id="brandSub">Ҷадвали дарсҳо</span></div>
+    </header>
+    <div class="days" id="days"></div>
+    <div class="hero" id="hero">
+      <div class="hero-label"><span class="dot"></span><span id="heroLabel">—</span></div>
+      <div class="hero-subject" id="heroSubject">—</div>
+      <div class="hero-room" id="heroRoom">—</div>
+      <div class="timer-row">
+        <div><small id="timerLabel">—</small><div class="timer" id="timer">--:--</div></div>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+      </div>
+    </div>
+    <div class="section-label" id="listLabel">Дарсҳо</div>
+    <div class="list" id="list"></div>
+    <button class="linkbtn" id="btnShowAll" style="display:none;"></button>
+    <footer id="foot">Синфи 10, гурӯҳи №15</footer>
+  </div>
+
+  <div class="view" id="view-bells">
+    <header><div class="brand" id="bellsTitle">Занг</div></header>
+    <div class="gate" id="gate-bells"></div>
+    <div class="section-label" id="shift1Label">1-уми смена</div>
+    <div class="list" id="shift1List"></div>
+    <div class="section-label" id="shift2Label">2-юми смена</div>
+    <div class="list" id="shift2List"></div>
+    <footer id="bellsFoot">Вақт тахминист</footer>
+  </div>
+
+  <div class="view" id="view-teachers">
+    <header><div class="brand" id="teachersTitle">Муаллимон</div><div class="filter-wrap" id="filterWrap"><button class="gear" id="sortBtn" type="button" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><i class="fdot"></i></button><div class="sort-menu" id="sortMenu" role="menu"></div></div></header>
+    <div class="gate" id="gate-teachers"></div>
+    <div class="note" id="teachersRoleNote" style="display:none;"></div>
+    <div id="teacherEditor"></div>
+    <div id="teacherImport"></div>
+    <div class="list" id="teachersList"></div>
+    <div class="placeholder-note" id="teachersNote" style="display:none;">Рӯйхати муаллимон ба зудӣ илова мешавад</div>
+  </div>
+
+  <div class="view" id="view-profile">
+    <header><div class="brand" id="profileTitle">Профил</div><button class="gear" id="gearBtn2"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a8 8 0 0 0 0-2l2.1-1.6-2-3.4-2.5 1a8 8 0 0 0-1.7-1L14.9 3h-4l-.4 2.9a8 8 0 0 0-1.7 1l-2.5-1-2 3.4L6.6 11a8 8 0 0 0 0 2l-2.1 1.6 2 3.4 2.5-1c.5.4 1.1.8 1.7 1l.4 2.9h4l.4-2.9c.6-.2 1.2-.6 1.7-1l2.5 1 2-3.4L19.4 13Z"/></svg></button></header>
+    <div id="profileBody"></div>
+  </div>
+
+  <div class="view" id="view-settings">
+    <header>
+      <button class="backbtn" id="backBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg> <span id="backLabel">Асосӣ</span></button>
+    </header>
+    <div class="setting-block">
+      <div class="setting-title" id="langTitle">Забон</div>
+      <div class="langs" id="langs">
+        <button data-l="tg">TJ</button><button data-l="ru">RU</button><button data-l="en">EN</button>
+      </div>
+    </div>
+    <div class="setting-block">
+      <button class="faq-head" id="faqHead" type="button" aria-expanded="false"><span id="faqTitle">FAQ</span><span class="faq-chev"></span></button>
+      <div class="faq-wrap" id="faqWrap"><div id="faqList"></div></div>
+    </div>
+    <div class="setting-block">
+      <div class="setting-title" id="themeTitle">Мавзӯъ</div>
+      <div class="theme-grid" id="themeGrid"></div>
+    </div>
+    <div class="setting-block" id="rainBlock" style="display:none;">
+      <div class="toggle-row">
+        <span id="rainLabel">Садои борон</span>
+        <div class="switch" id="rainSwitch"></div>
+      </div>
+    </div>
+    <div class="setting-block">
+      <div class="toggle-row">
+        <span id="transLabel">Фони шаффоф</span>
+        <div class="switch" id="transSwitch"></div>
+      </div>
+    </div>
+    <div class="setting-block">
+      <div class="setting-title" id="schedTitle">Ҷадвал</div>
+      <div class="toggle-row"><span id="focusLabel"></span><div class="switch" id="focusSwitch" role="switch" tabindex="0"></div></div>
+      <div class="hint" id="focusHint"></div>
+      <div id="shiftBox"></div>
+    </div>
+    <div class="setting-block">
+      <div class="setting-title" id="aboutTitle"></div>
+      <div id="aboutBox"></div>
+    </div>
+    <div class="setting-block">
+      <div class="setting-title" id="dataTitle">Маълумот</div>
+      <button class="btn btn-ghost" id="btnResetAll" style="width:100%;"></button>
+    </div>
+    <div class="setting-block" id="devBlock"></div>
+  </div>
+
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner" id="tabbar"></div>
+</nav>
+
+<script>
+/* ============ i18n ============ */
+const UI = {
+  tg:{brandSub:"Ҷадвали дарсҳо", now:"Ҳозир дарс", break:"Танаффус", untilBell:"то занг", untilStart:"то ибтидо",
+      over:"Дарсҳо тамом шуданд", overSub:"Рӯзи хуш 🌆", lessons:"Дарсҳо", next:"баъдӣ", going:"меравад", foot:"Синфи 10, гурӯҳи №15",
+      navHome:"Асосӣ", navBells:"Занг", navTeachers:"Муаллимон", navProfile:"Профил",
+      bellsTitle:"Занг", shift1:"1-уми смена", shift2:"2-юми смена", bellsFoot:"Вақт тахминист",
+      teachersTitle:"Муаллимон", teachersNote:"Рӯйхати муаллимон ба зудӣ илова мешавад",
+      profileTitle:"Профил", start:"сар", end:"анҷом",
+      langTitle:"Забон", themeTitle:"Мавзӯъ", rainLabel:"Садои борон", transLabel:"Фони шаффоф",
+      themes:{classic:"Классикӣ", pro:"Профессионалӣ", mono:"Тунукӣ", sunset:"Шафақ"},
+      register:"Бақайдгирӣ", guest:"Ворид ҳамчун меҳмон", fio:"Ному насаб", fioHint:"Падарнома ихтиёрӣ",
+      cls:"Синф", grp:"Гурӯҳ", role:"Нақш", shift:"Смена", student:"Хонанда", save:"Нигоҳ доштан",
+      roles:{student:"Хонанда", teacher:"Муаллим", deputy:"Завуч", director:"Директор"},
+      changeFio:"Тағйир додани ном", lockedFio:"Номро танҳо як бор дар 6 моҳ иваз кардан мумкин аст",
+      daysLeft:"боз", edit:"Таҳрир", guestBadge:"Меҳмон", regFrom:"Ба қайд гирифта шудааст",
+      back:"Бозгашт", logout:"Баромадан", signBack:"Бори дигар ворид шудан",
+      teachersTitle2:"Муаллимон", addTeacher:"Илова кардани муаллим", teacherName:"Ному насаби муаллим", teacherSubj:"Фан", add:"Илова", delete:"Хориҷ", teachersViewOnly:"Рӯйхатро танҳо Директор ва Завуч тағйир дода метавонанд", pickSubjects:"Фанҳо", otherSubjects:"Фанҳои дигар (бо вергул)", cancel:"Бекор кардан", teacherNeed:"Ному насаб ва ақаллан як фанро ворид кунед", confirmDel:"Ин муаллимро хориҷ мекунед?",
+      staffCode:"Рамзи корманд", staffHint:"Барои нақши Завуч ё Директор рамзи корманд лозим аст", codeWrong:"Рамз нодуруст аст",
+      dataTitle:"Маълумот", resetAll:"Тоза кардани ҳамаи маълумот", resetConfirm:"Ҳамаи маълумоти маҳаллӣ нест карда мешавад. Идома медиҳед?",
+      devTitle:"Барномасоз (Dev)", devCode:"Рамзи барномасоз", devOn:"Реҷаи Dev фаъол аст", devOff:"Баромадан", devExport:"Содир кардан", devImport:"Ворид кардан", devHashLabel:"Hash-и рамз (барои файл)", copied:"Нусха шуд", imported:"Ворид шуд", badFormat:"Формати нодуруст", phone:"Телефон", phoneBad:"Телефон бояд дар шакли +992… ё +7… бошад", impFile:"Аз файл бор кардан", expFile:"Боргирии рӯйхат", impSample:"Боргирии намунаи файл", impFormat:"Шакли сатр: Ному насаб - +992 900 12 34 56 - Физика, Алгебра. Телефон: +992 ё +7. Ҷудокунанда: « - », «;» ё Tab. Файл .txt, .csv ё .json", impFound:"Муаллимон ёфт шуд: {n}", impNone:"Ягон сатр ёфт нашуд", impErrTitle:"Сатрҳои рад шуда: {n}", impErrLine:"сатри {n}: {why}", impWhyPhone:"телефони нодуруст", impWhyName:"ному насаб нест", impWhySubj:"фан нест", impReplace:"Иваз кардани рӯйхат", impAdd:"Ба рӯйхат илова кардан", confirmReplace:"Рӯйхати ҷорӣ иваз карда мешавад. Идома медиҳед?", sampleComment:"Ному насаб - телефон (+992 ё +7) - фанҳо бо вергул", schedTitle:"Ҷадвал", focusLabel:"Танҳо дарси гузашта, ҷорӣ ва баъдӣ", focusHint:"Дарси ҷорӣ равшан, ҳамсояҳо тира мешаванд. Дигаронро бо тугмаи зери рӯйхат нишон додан мумкин аст.", showAll:"Ҳамаи дарсҳоро нишон додан", showFocus:"Танҳо наздиктаринҳо", aboutTitle:"Дар бораи барнома", version:"Версия", listUpdated:"Рӯйхати муаллимон нав шуд", whoTitle:"Шумо кистед?", whoHint:"Нақшро интихоб кунед — маълумоти лозим аз он вобаста аст", roleDesc_student:"Синф, гурӯҳ, навбат", roleDesc_teacher:"Ному насаб, телефон, фанҳо", roleDesc_deputy:"Рамзи дастрасӣ лозим", roleDesc_director:"Рамзи дастрасӣ лозим", changeRole:"Иваз кардани нақш", accessCode:"Рамзи дастрасӣ", accessHint:"Рамзро барномасоз медиҳад. Бе он нақшҳои Завуч ва Директор дастнорасанд", codeRoleMismatch:"Ин рамз ба нақши интихобшуда мувофиқ нест", codeNeed:"Рамзи дастрасиро ворид кунед", codeRevoked:"Рамзи дастрасӣ дигар эътибор надорад — рамзи нав ворид кунед (Профил → Таҳрир)", needSecure:"Санҷиши рамз дастнорас: барномаро тавассути https ё localhost кушоед", lockedTry:"Кӯшишҳо аз ҳад зиёд. Баъд аз {m} дақиқа такрор кунед", nameNeed:"Ному насабро ворид кунед", subjNeed:"Ақаллан як фанро интихоб кунед", shiftSchedTitle:"Навбати ҷадвал", codeVerified:"Рамз тасдиқ шуд", devCodes:"Рамзҳои дастрасӣ (Завуч / Директор)", codeLabel:"Барои кӣ (нишона)", codeLabelNeed:"Нишон диҳед, ки рамз барои кист", codeCreate:"Сохтани рамз", codeShownOnce:"Рамз як маротиба нишон дода мешавад. Нусха гирифта ба шахс диҳед:", codeNone:"Ҳанӯз рамз нест", codeDeleteConfirm:"Рамзро нест мекунед? Дар дастгоҳҳои дигар дастрасӣ баъди навсозии файл баста мешавад.", regExport:"Нусхаи феҳристи рамзҳо барои файл", regImport:"Бор кардани феҳрист", regHint:"JSON-и нусхагирифташударо ба STAFF_CODES дар аввали скрипт гузоред ва файлро нашр кунед — он гоҳ рамзҳо дар ҳамаи дастгоҳҳо кор мекунанд.", devPassTool:"Танзимот барои рамзи нави Dev", devPassGen:"Сохтан", devTeachers:"Рӯйхати муаллимон (JSON)", copy:"Нусха гирифтан", avatarBad:"Тасвирро кушодан муяссар нашуд. Акси JPG ё PNG интихоб кунед", avatarBig:"Файл хеле калон аст (то 60 МБ)", phoneNeed:"Рақами телефонро ворид кунед", impWhyNoPhone:"телефон нест", loginAs:"Бо кадом нақш ворид мешавед?", loginHint:"Нақшро барои ворид шудан интихоб кунед", savedAs:"Профили захирашуда: {name}", loginGuest:"Ҳамчун меҳмон идома додан", eyeShow:"Нишон додани рамз", eyeHide:"Пинҳон кардани рамз", ok:"Ҳа", sortTitle:"Тартиб", sortDefault:"Одатӣ", sortAZ:"Аз рӯи алифбо А → Я", sortZA:"Аз рӯи алифбо Я → А", sortNew:"Аввал нав", sortOld:"Аввал кӯҳна", sortAgeOld:"Синну сол: калонсолон аввал", sortAgeYoung:"Синну сол: ҷавонон аввал", bornLabel:"Соли таваллуд (ихтиёрӣ)", bornShort:"с.т. {y}", bornBad:"Соли таваллуд: аз 1930 то {y}", gateTitle:"Бахш пӯшида аст", gateBody:"Барои кушодани «{sec}» аввал сабти ном кунед.", gateBodyIn:"Барои кушодани «{sec}» ба профил ворид шавед.", gateReg:"Сабти ном", gateIn:"Ворид шудан", impUnsupported_ole:"Файлҳои кӯҳнаи .doc ва .xls дастгирӣ намешаванд — онҳоро ҳамчун .docx ё .xlsx захира кунед", impUnsupported_pdf:"PDF дастгирӣ намешавад — рӯйхатро ҳамчун .docx, .xlsx ё .txt захира кунед", impUnsupported_zip:"Файлро хондан муяссар нашуд. Дастгирӣ мешаванд: .docx, .xlsx, .odt, .ods, .txt, .csv, .json", impNoStream:"Ин браузер .docx/.xlsx-ро кушода наметавонад — браузерро нав кунед ё рӯйхатро ҳамчун .txt ё .csv захира кунед", impReadErr:"Файлро хондан муяссар нашуд", impFormat2:"Сатр: Ному насаб - +992 900 12 34 56 - Физика, Алгебра (соли таваллудро илова кардан мумкин: 1978). Телефон ҳатмист: +992 ё +7. Форматҳо: .txt .csv .docx .xlsx .odt .ods .rtf .html .json. Ҷадвалҳои Word ва Excel аз рӯи сутунҳо хонда мешаванд.", devChipOff:"Аз Dev баромадан", faqTitle:"FAQ",
+      faq:[
+       ["Ҷадвалро чӣ тавр хондан лозим?", "Рӯзро дар боло интихоб кунед. Корти болоӣ дарси ҷорӣ ва вақти то занг, дар танаффус — дарси баъдиро нишон медиҳад."],
+       ["Навбат чист?", "Вақти занг аз навбат вобаста аст: навбати 1 соати 08:00 ва навбати 2 соати 13:00 оғоз мешавад. Хонанда навбатро дар профил, дигарон дар танзимот интихоб мекунанд."],
+       ["Кӣ рӯйхати муаллимонро тағйир дода метавонад?", "Танҳо директор ва завуч. Дигарон рӯйхатро дида, ба муаллимон занг зада метавонанд."],
+       ["Рамзи завуч ё директорро аз куҷо гирам?", "Рамзро барномасози барнома месозад. Ба ӯ муроҷиат кунед ва рамзро ҳангоми сабти ном ворид кунед."],
+       ["Маълумоти ман дар куҷо нигоҳ дошта мешавад?", "Танҳо дар дастгоҳи шумо, дар браузер. Агар маълумоти браузерро тоза кунед, профил ва танзимот нест мешаванд."]
+      ]},
+  ru:{brandSub:"Расписание уроков", now:"Идёт урок", break:"Перемена", untilBell:"до звонка", untilStart:"до начала",
+      over:"Уроки закончились", overSub:"Хорошего вечера 🌆", lessons:"Уроки", next:"далее", going:"идёт", foot:"10 класс, группа №15",
+      navHome:"Главная", navBells:"Звонки", navTeachers:"Преподаватели", navProfile:"Профиль",
+      bellsTitle:"Звонки", shift1:"1-я смена", shift2:"2-я смена", bellsFoot:"Время ориентировочное",
+      teachersTitle:"Преподаватели", teachersNote:"Список преподавателей скоро появится",
+      profileTitle:"Профиль", start:"начало", end:"конец",
+      langTitle:"Язык", themeTitle:"Тема", rainLabel:"Звук дождя", transLabel:"Прозрачный фон",
+      themes:{classic:"Классическая", pro:"Профессиональная", mono:"Минимал", sunset:"Закат"},
+      register:"Зарегистрироваться", guest:"Войти как гость", fio:"ФИО", fioHint:"Отчество необязательно",
+      cls:"Класс", grp:"Группа", role:"Роль", shift:"Смена", student:"Ученик", save:"Сохранить",
+      roles:{student:"Ученик", teacher:"Учитель", deputy:"Завуч", director:"Директор"},
+      changeFio:"Изменить имя", lockedFio:"Имя можно менять раз в 6 месяцев",
+      daysLeft:"осталось", edit:"Редактировать", guestBadge:"Гость", regFrom:"Зарегистрирован",
+      back:"Назад", logout:"Выйти", signBack:"Войти снова",
+      teachersTitle2:"Преподаватели", addTeacher:"Добавить преподавателя", teacherName:"ФИО преподавателя", teacherSubj:"Предмет", add:"Добавить", delete:"Удалить", teachersViewOnly:"Менять список могут только директор и завуч", pickSubjects:"Предметы", otherSubjects:"Другие предметы (через запятую)", cancel:"Отмена", teacherNeed:"Введите ФИО и выберите хотя бы один предмет", confirmDel:"Удалить этого преподавателя?",
+      staffCode:"Код сотрудника", staffHint:"Для роли завуча или директора нужен код сотрудника", codeWrong:"Неверный код",
+      dataTitle:"Данные", resetAll:"Стереть все данные", resetConfirm:"Все локальные данные будут удалены. Продолжить?",
+      devTitle:"Разработчик (Dev)", devCode:"Код разработчика", devOn:"Режим Dev включён", devOff:"Выйти", devExport:"Экспорт", devImport:"Импорт", devHashLabel:"Hash кода (для файла)", copied:"Скопировано", imported:"Импортировано", badFormat:"Неверный формат", phone:"Телефон", phoneBad:"Телефон должен быть в формате +992… или +7…", impFile:"Загрузить из файла", expFile:"Скачать список", impSample:"Скачать образец файла", impFormat:"Формат строки: ФИО - +992 900 12 34 56 - Физика, Алгебра. Телефон: +992 или +7. Разделитель: « - », «;» или Tab. Файл .txt, .csv или .json", impFound:"Найдено преподавателей: {n}", impNone:"Не удалось найти ни одной строки", impErrTitle:"Пропущено строк: {n}", impErrLine:"строка {n}: {why}", impWhyPhone:"неверный телефон", impWhyName:"нет ФИО", impWhySubj:"нет предметов", impReplace:"Заменить список", impAdd:"Добавить к списку", confirmReplace:"Текущий список будет заменён. Продолжить?", sampleComment:"ФИО - телефон (+992 или +7) - предметы через запятую", schedTitle:"Расписание", focusLabel:"Только прошлый, текущий и следующий урок", focusHint:"Текущий урок подсвечен, соседние приглушены. Остальные можно показать кнопкой под списком.", showAll:"Показать все уроки", showFocus:"Показать только ближайшие", aboutTitle:"О приложении", version:"Версия", listUpdated:"Список преподавателей обновлён", whoTitle:"Ты кто?", whoHint:"Выбери роль — от неё зависит, какие данные понадобятся", roleDesc_student:"Класс, группа, смена", roleDesc_teacher:"ФИО, телефон, предметы", roleDesc_deputy:"Нужен код доступа", roleDesc_director:"Нужен код доступа", changeRole:"Сменить роль", accessCode:"Код доступа", accessHint:"Код выдаёт разработчик. Без него роли завуча и директора недоступны", codeRoleMismatch:"Этот код не подходит для выбранной роли", codeNeed:"Введите код доступа", codeRevoked:"Код доступа больше не действует — введите новый (Профиль → Изменить)", needSecure:"Проверка кода недоступна: откройте приложение по https или localhost", lockedTry:"Слишком много попыток. Повторите через {m} мин", nameNeed:"Введите ФИО", subjNeed:"Выберите хотя бы один предмет", shiftSchedTitle:"Смена расписания", codeVerified:"Код подтверждён", devCodes:"Коды доступа (завуч / директор)", codeLabel:"Для кого (метка)", codeLabelNeed:"Укажите, для кого код", codeCreate:"Создать код", codeShownOnce:"Код показан один раз. Скопируйте и передайте человеку:", codeNone:"Кодов пока нет", codeDeleteConfirm:"Удалить код? На других устройствах доступ закроется после обновления файла с реестром.", regExport:"Скопировать реестр для файла", regImport:"Загрузить реестр", regHint:"Вставьте скопированный JSON в STAFF_CODES в начале скрипта и опубликуйте файл — тогда коды заработают на всех устройствах.", devPassTool:"Конфиг для нового Dev-пароля", devPassGen:"Сгенерировать", devTeachers:"Список преподавателей (JSON)", copy:"Копировать", avatarBad:"Не удалось открыть изображение. Выберите фото в формате JPG или PNG", avatarBig:"Файл слишком большой (до 60 МБ)", phoneNeed:"Введите номер телефона", impWhyNoPhone:"нет телефона", loginAs:"Войти как…", loginHint:"Выберите роль для входа", savedAs:"Сохранённый профиль: {name}", loginGuest:"Продолжить как гость", eyeShow:"Показать пароль", eyeHide:"Скрыть пароль", ok:"Да", sortTitle:"Сортировка", sortDefault:"По умолчанию", sortAZ:"По алфавиту А → Я", sortZA:"По алфавиту Я → А", sortNew:"Сначала новые", sortOld:"Сначала старые", sortAgeOld:"Возраст: старшие первыми", sortAgeYoung:"Возраст: младшие первыми", bornLabel:"Год рождения (необязательно)", bornShort:"г.р. {y}", bornBad:"Год рождения: от 1930 до {y}", gateTitle:"Раздел закрыт", gateBody:"Чтобы открыть «{sec}», сначала зарегистрируйтесь.", gateBodyIn:"Чтобы открыть «{sec}», войдите в профиль.", gateReg:"Зарегистрироваться", gateIn:"Войти", impUnsupported_ole:"Старые файлы .doc и .xls не поддерживаются — сохраните как .docx или .xlsx", impUnsupported_pdf:"PDF не поддерживается — сохраните список как .docx, .xlsx или .txt", impUnsupported_zip:"Не удалось прочитать файл. Поддерживаются .docx, .xlsx, .odt, .ods, .txt, .csv, .json", impNoStream:"Этот браузер не умеет распаковывать .docx/.xlsx — обновите браузер или сохраните список как .txt или .csv", impReadErr:"Не удалось прочитать файл", impFormat2:"Строка: ФИО - +992 900 12 34 56 - Физика, Алгебра (можно добавить год рождения: 1978). Телефон обязателен: +992 или +7. Форматы: .txt .csv .docx .xlsx .odt .ods .rtf .html .json. Таблицы Word и Excel читаются по столбцам.", devChipOff:"Выйти из Dev", faqTitle:"FAQ",
+      faq:[
+       ["Как читать расписание?", "Выберите день вверху. Верхняя карточка показывает текущий урок и время до звонка, а на перемене — следующий урок."],
+       ["Что такое смена?", "От смены зависит время звонков: 1-я начинается в 08:00, 2-я в 13:00. Ученик выбирает смену в профиле, остальные — в настройках."],
+       ["Кто может менять список преподавателей?", "Только директор и завуч. Остальные могут смотреть список и звонить преподавателям."],
+       ["Как получить код завуча или директора?", "Код создаёт разработчик приложения. Обратитесь к нему и введите код при регистрации."],
+       ["Где хранятся мои данные?", "Только на вашем устройстве, в браузере. Если очистить данные браузера, профиль и настройки пропадут."]
+      ]},
+  en:{brandSub:"Class schedule", now:"Class in progress", break:"Break", untilBell:"until bell", untilStart:"until start",
+      over:"Classes are over", overSub:"Have a good evening 🌆", lessons:"Lessons", next:"next", going:"now", foot:"Grade 10, group 15",
+      navHome:"Home", navBells:"Bells", navTeachers:"Teachers", navProfile:"Profile",
+      bellsTitle:"Bells", shift1:"1st shift", shift2:"2nd shift", bellsFoot:"Times are approximate",
+      teachersTitle:"Teachers", teachersNote:"Teacher list coming soon",
+      profileTitle:"Profile", start:"start", end:"end",
+      langTitle:"Language", themeTitle:"Theme", rainLabel:"Rain sound", transLabel:"Transparent background",
+      themes:{classic:"Classic", pro:"Professional", mono:"Minimal", sunset:"Sunset"},
+      register:"Register", guest:"Continue as guest", fio:"Full name", fioHint:"Middle name optional",
+      cls:"Class", grp:"Group", role:"Role", shift:"Shift", student:"Student", save:"Save",
+      roles:{student:"Student", teacher:"Teacher", deputy:"Deputy head", director:"Director"},
+      changeFio:"Change name", lockedFio:"Name can be changed once every 6 months",
+      daysLeft:"left", edit:"Edit", guestBadge:"Guest", regFrom:"Registered",
+      back:"Back", logout:"Log out", signBack:"Sign back in",
+      teachersTitle2:"Teachers", addTeacher:"Add teacher", teacherName:"Teacher name", teacherSubj:"Subject", add:"Add", delete:"Delete", teachersViewOnly:"Only the director and deputy can change this list", pickSubjects:"Subjects", otherSubjects:"Other subjects (comma-separated)", cancel:"Cancel", teacherNeed:"Enter a name and pick at least one subject", confirmDel:"Delete this teacher?",
+      staffCode:"Staff code", staffHint:"Deputy or Director role needs a staff code", codeWrong:"Wrong code",
+      dataTitle:"Data", resetAll:"Erase all data", resetConfirm:"All local data will be deleted. Continue?",
+      devTitle:"Developer (Dev)", devCode:"Developer code", devOn:"Dev mode is on", devOff:"Exit", devExport:"Export", devImport:"Import", devHashLabel:"Code hash (for the file)", copied:"Copied", imported:"Imported", badFormat:"Invalid format", phone:"Phone", phoneBad:"Phone must look like +992… or +7…", impFile:"Import from file", expFile:"Download list", impSample:"Download sample file", impFormat:"Line format: Full name - +992 900 12 34 56 - Physics, Algebra. Phone: +992 or +7. Separator: \" - \", \";\" or Tab. File: .txt, .csv or .json", impFound:"Teachers found: {n}", impNone:"No usable lines found", impErrTitle:"Skipped lines: {n}", impErrLine:"line {n}: {why}", impWhyPhone:"invalid phone", impWhyName:"no name", impWhySubj:"no subjects", impReplace:"Replace list", impAdd:"Add to list", confirmReplace:"The current list will be replaced. Continue?", sampleComment:"Full name - phone (+992 or +7) - subjects separated by commas", schedTitle:"Schedule", focusLabel:"Only previous, current and next lesson", focusHint:"The current lesson is highlighted, neighbours are dimmed. You can show the rest with the button under the list.", showAll:"Show all lessons", showFocus:"Show nearest only", aboutTitle:"About", version:"Version", listUpdated:"Teacher list updated", whoTitle:"Who are you?", whoHint:"Pick your role — it decides what we ask next", roleDesc_student:"Class, group, shift", roleDesc_teacher:"Name, phone, subjects", roleDesc_deputy:"Access code required", roleDesc_director:"Access code required", changeRole:"Change role", accessCode:"Access code", accessHint:"The developer issues the code. Deputy and Director roles are unavailable without it", codeRoleMismatch:"This code does not match the selected role", codeNeed:"Enter the access code", codeRevoked:"The access code is no longer valid — enter a new one (Profile → Edit)", needSecure:"Code check unavailable: open the app over https or localhost", lockedTry:"Too many attempts. Try again in {m} min", nameNeed:"Enter your name", subjNeed:"Pick at least one subject", shiftSchedTitle:"Schedule shift", codeVerified:"Code verified", devCodes:"Access codes (deputy / director)", codeLabel:"For whom (label)", codeLabelNeed:"Say who the code is for", codeCreate:"Create code", codeShownOnce:"The code is shown once. Copy it and hand it over:", codeNone:"No codes yet", codeDeleteConfirm:"Delete this code? On other devices access closes after the registry file is updated.", regExport:"Copy registry for the file", regImport:"Load registry", regHint:"Paste the copied JSON into STAFF_CODES at the top of the script and publish the file — then the codes work on every device.", devPassTool:"Config for a new Dev passphrase", devPassGen:"Generate", devTeachers:"Teacher list (JSON)", copy:"Copy", avatarBad:"Could not open the image. Choose a JPG or PNG photo", avatarBig:"File is too large (up to 60 MB)", phoneNeed:"Enter a phone number", impWhyNoPhone:"no phone", loginAs:"Sign in as…", loginHint:"Pick a role to sign in", savedAs:"Saved profile: {name}", loginGuest:"Continue as guest", eyeShow:"Show password", eyeHide:"Hide password", ok:"Yes", sortTitle:"Sort", sortDefault:"Default", sortAZ:"Alphabetical A → Z", sortZA:"Alphabetical Z → A", sortNew:"Newest first", sortOld:"Oldest first", sortAgeOld:"Age: oldest first", sortAgeYoung:"Age: youngest first", bornLabel:"Birth year (optional)", bornShort:"b. {y}", bornBad:"Birth year: 1930 to {y}", gateTitle:"Section locked", gateBody:"Register first to open “{sec}”.", gateBodyIn:"Sign in to open “{sec}”.", gateReg:"Register", gateIn:"Sign in", impUnsupported_ole:"Old .doc and .xls files are not supported — save as .docx or .xlsx", impUnsupported_pdf:"PDF is not supported — save the list as .docx, .xlsx or .txt", impUnsupported_zip:"Could not read the file. Supported: .docx, .xlsx, .odt, .ods, .txt, .csv, .json", impNoStream:"This browser cannot unpack .docx/.xlsx — update it or save the list as .txt or .csv", impReadErr:"Could not read the file", impFormat2:"Line: Full name - +992 900 12 34 56 - Physics, Algebra (optionally add a birth year: 1978). Phone is required: +992 or +7. Formats: .txt .csv .docx .xlsx .odt .ods .rtf .html .json. Word and Excel tables are read by columns.", devChipOff:"Exit Dev", faqTitle:"FAQ",
+      faq:[
+       ["How do I read the schedule?", "Pick a day at the top. The top card shows the current lesson and time until the bell, and the next lesson during a break."],
+       ["What is a shift?", "The shift sets the bell times: shift 1 starts at 08:00, shift 2 at 13:00. Students choose it in their profile, everyone else in settings."],
+       ["Who can edit the teacher list?", "Only the director and deputy. Everyone else can view the list and call teachers."],
+       ["How do I get a deputy or director code?", "The app developer creates it. Ask them and enter the code when you register."],
+       ["Where is my data stored?", "Only on your device, in the browser. Clearing browser data removes your profile and settings."]
+      ]}
+};
+const DAYNAMES = {tg:["Якшанбе","Душанбе","Сешанбе","Чоршанбе","Панҷшанбе","Ҷумъа","Шанбе"],
+  ru:["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"],
+  en:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]};
+const DAYSHORT = {tg:["Як","Дш","Сш","Чш","Пш","Ҷм","Шн"], ru:["Вс","Пн","Вт","Ср","Чт","Пт","Сб"], en:["Su","Mo","Tu","We","Th","Fr","Sa"]};
+const S = {
+  fizika:{tg:"Физика", ru:"Физика", en:"Physics"}, adabiyot:{tg:"Адабиёт", ru:"Литература", en:"Literature"},
+  sokht_komp:{tg:"Сохти компютерии фардӣ", ru:"Устройство ПК", en:"Computer Architecture"},
+  khoriji:{tg:"Забони хориҷӣ", ru:"Иностранный язык", en:"Foreign Language"}, algebra:{tg:"Алгебра", ru:"Алгебра", en:"Algebra"},
+  tarbiya:{tg:"Тарбияи ҷисмонӣ", ru:"Физкультура", en:"Physical Education"},
+  zaboni_modari:{tg:"Забони модарӣ", ru:"Родной язык", en:"Native Language"}, huquq:{tg:"Ҳуқуқ", ru:"Право", en:"Law"},
+  hifzi_mehnat:{tg:"Ҳифзи меҳнат ва экология", ru:"Охрана труда и экология", en:"Labor Safety & Ecology"},
+  zaboni_rusi:{tg:"Забони русӣ", ru:"Русский язык", en:"Russian Language"}, t_umumi:{tg:"Т.Умумӣ", ru:"Общая технология", en:"General Technology"},
+  geometriya:{tg:"Геометрия", ru:"Геометрия", en:"Geometry"}, geografiya:{tg:"География", ru:"География", en:"Geography"},
+  biologiya:{tg:"Биология", ru:"Биология", en:"Biology"}, himiya:{tg:"Химия", ru:"Химия", en:"Chemistry"},
+  yori_avval:{tg:"Ёрии аввали тиббӣ", ru:"Первая медицинская помощь", en:"First Aid"},
+  talimi_istehsoli:{tg:"Таълими истеҳсолӣ", ru:"Производственное обучение", en:"Vocational Training"},
+  tht:{tg:"Т.Х.Т", ru:"Технология домоводства", en:"Home Economics"},
+  m_oiladori:{tg:"Маданияти оиладорӣ", ru:"Семейная культура", en:"Family Studies"},
+  asos_itti:{tg:"Асосҳои омӯзиши иттилоотӣ", ru:"Основы информатики", en:"Basics of IT"},
+  odh:{tg:"ОДҲ", ru:"Начальная военная подготовка", en:"Basic Military Training"},
+  tex_itti:{tg:"Технологияи иттилоотӣ", ru:"Информационные технологии", en:"Information Technology"}
+};
+const TIMES = [["08:00","08:45"],["08:50","09:35"],["09:40","10:25"],["10:30","11:15"],["11:20","12:05"],["12:10","12:50"]];
+const SHIFT2_TIMES = [["13:00","13:45"],["13:50","14:35"],["14:40","15:25"],["15:30","16:15"],["16:20","17:05"],["17:10","17:50"]];
+const WEEK = {1:["fizika","adabiyot","sokht_komp","khoriji","algebra","tarbiya"],
+  2:["zaboni_modari","huquq","hifzi_mehnat","zaboni_rusi","algebra","t_umumi"],
+  3:["zaboni_modari","geometriya","geografiya","t_umumi","biologiya","adabiyot"],
+  4:["biologiya","hifzi_mehnat","himiya","yori_avval","zaboni_rusi","himiya"],
+  5:["talimi_istehsoli","talimi_istehsoli","talimi_istehsoli","talimi_istehsoli","talimi_istehsoli","talimi_istehsoli"],
+  6:["tht","khoriji","m_oiladori","asos_itti","odh","tex_itti"]};
+const ICON_PATHS = {
+  home:'<path d="M4 11.5 12 4l8 7.5"/><path d="M6 10.3V20h5v-5h2v5h5v-9.7"/>',
+  bells:'<path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 13 6 9Z"/><path d="M10 19a2 2 0 0 0 4 0"/>',
+  teachers:'<path d="M2 9 12 4l10 5-10 5-10-5Z"/><path d="M6 11.3V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.7"/>',
+  profile:'<circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-3.5 3.1-6 7-6s7 2.5 7 6"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 13a8 8 0 0 0 0-2l2.1-1.6-2-3.4-2.5 1a8 8 0 0 0-1.7-1L14.9 3h-4l-.4 2.9a8 8 0 0 0-1.7 1l-2.5-1-2 3.4L6.6 11a8 8 0 0 0 0 2l-2.1 1.6 2 3.4 2.5-1c.5.4 1.1.8 1.7 1l.4 2.9h4l.4-2.9c.6-.2 1.2-.6 1.7-1l2.5 1 2-3.4L19.4 13Z"/>',
+  back:'<path d="M15 5 8 12l7 7"/>'
+};
+function icon(name){return `<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ICON_PATHS[name]}</svg>`;}
+
+const TABS = [{id:"home", ic:"home", key:"navHome"},{id:"bells", ic:"bells", key:"navBells"},
+  {id:"teachers", ic:"teachers", key:"navTeachers"},{id:"profile", ic:"profile", key:"navProfile"}];
+const THEME_SWATCH = {classic:"linear-gradient(135deg,#ff6a1a,#ffab40)", pro:"linear-gradient(135deg,#2a3a4a,#0a0f14)",
+  mono:"linear-gradient(135deg,#e5e5e5,#333)", sunset:"linear-gradient(135deg,#ff5f6d,#ffc371)"};
+const AV_ICONS = {
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',
+  cap:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.3V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.7"/><path d="M22 9v6"/>',
+  book:'<path d="M12 6.5C10.5 5.3 8.3 4.7 5 4.7v13.6c3.3 0 5.5.6 7 1.8 1.5-1.2 3.7-1.8 7-1.8V4.7c-3.3 0-5.5.6-7 1.8z"/><path d="M12 6.5v13.6"/>',
+  rocket:'<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>',
+  star:'<polygon points="12 2.5 14.9 8.6 21.5 9.4 16.6 14 17.9 20.6 12 17.3 6.1 20.6 7.4 14 2.5 9.4 9.1 8.6 12 2.5"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  phones:'<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>',
+  zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>',
+  cat:'<path d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7.14-.42 7.14 3.29 5.04 1.24 11.74-4.8 11.74H8.8C2.76 21.88.71 15.18 4 10.14c0 0-1.82-6.56-.42-7.14C4.39 2.42 7.64 3.26 10 5.26c.65-.17 1.33-.26 2-.26z"/><path d="M8 14v.5"/><path d="M16 14v.5"/><path d="M11.25 16.25h1.5L12 17z"/>',
+  heart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/>'
+};
+const AVATARS = Object.keys(AV_ICONS).map(k => "i:" + k);
+const LEGACY_AV = {"👤":"user","🦊":"cat","🐼":"cat","🦁":"cat","🐯":"cat","🚀":"rocket","🎓":"cap","📘":"book","⭐":"star","🔥":"flame","🎧":"phones","⚡":"zap","🌙":"moon"};
+const DATA_AV = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/;
+function normAvatar(a){
+  if(typeof a!=="string" || !a) return "i:user";
+  if(DATA_AV.test(a)) return a;
+  if(a.startsWith("i:") && AV_ICONS[a.slice(2)]) return a;
+  return "i:" + (LEGACY_AV[a] || "user");
+}
+function avatarHTML(a){
+  a = normAvatar(a);
+  if(a.startsWith("data:")) return `<img class="av-img" src="${a}" alt="">`;
+  return `<svg class="av-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AV_ICONS[a.slice(2)]}</svg>`;
+}
+function imageToAvatar(file){
+  return new Promise((res, rej)=>{
+    if(file.size > 60*1024*1024) return rej(new Error("big"));          // тип файла не проверяем: на Android он часто пустой
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = ()=>{
+      try{
+        if(!img.naturalWidth || !img.naturalHeight) throw new Error("load");
+        const N=192, c=document.createElement("canvas"); c.width=c.height=N;
+        const ctx=c.getContext("2d"), m=Math.min(img.naturalWidth, img.naturalHeight);
+        ctx.drawImage(img, (img.naturalWidth-m)/2, (img.naturalHeight-m)/2, m, m, 0, 0, N, N);
+        URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg", 0.85));
+      }catch(e){ URL.revokeObjectURL(url); rej(new Error("load")); }
+    };
+    img.onerror = ()=>{ URL.revokeObjectURL(url); rej(new Error("load")); };
+    img.src = url;
+  });
+}
+const EYE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="lid" d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle class="pupil" cx="12" cy="12" r="3"/><path class="slash" d="M4 4l16 16"/></svg>';
+function pwField(id, ph){
+  return `<div class="pw"><input type="password" id="${id}" autocomplete="off" placeholder="${esc(ph||"")}"/><button type="button" class="pw-eye" data-pw="${id}" aria-label="${esc(UI[lang].eyeShow)}" aria-pressed="false">${EYE_SVG}</button></div>`;
+}
+document.addEventListener("mousedown", e=>{ if(e.target.closest && e.target.closest(".pw-eye")) e.preventDefault(); });
+document.addEventListener("click", e=>{
+  const b = e.target.closest && e.target.closest(".pw-eye"); if(!b) return;
+  const inp = document.getElementById(b.dataset.pw); if(!inp) return;
+  const show = inp.type === "password";
+  inp.type = show ? "text" : "password";
+  b.classList.toggle("on", show); b.setAttribute("aria-pressed", String(show));
+  b.setAttribute("aria-label", UI[lang][show ? "eyeHide" : "eyeShow"]);
+  b.classList.remove("blink"); void b.offsetWidth; b.classList.add("blink");
+  try{ inp.focus({preventScroll:true}); }catch(err){}
+});
+const SIX_MONTHS_MS = 182*24*60*60*1000;
+
+/* ============ access config ============
+   Dev-пароль хранится как PBKDF2-хеш (сам пароль в файле не лежит). Пароль по умолчанию: xz-dev-2026 — ОБЯЗАТЕЛЬНО СМЕНИ:
+   Настройки -> О приложении -> 7 нажатий на строку «Версия» -> вход Dev -> «Конфиг для нового Dev-пароля» -> вставь результат в AUTH.DEV.
+   Коды завуча/директора создаёт и удаляет только Dev (Dev-панель -> Коды доступа).
+   Чтобы коды работали на всех устройствах: скопируй реестр в Dev-панели и вставь в STAFF_CODES, потом опубликуй файл. */
+const AUTH = { DEV:{ salt:"97d70f661844765e4bc9703ed96a3e36", iter:100000, hash:"1bb220f28d6afece9db8d8c0631d3da775ff7d72d1d18b82e54194214c990dd4" } };
+const STAFF_ROLES = ["deputy","director"];           // кто может менять список учителей (после проверки кода)
+const STAFF_CODES = [];                              // реестр кодов доступа (только хеши), вставляется из Dev-панели
+const DEV_SESSION_MS = 20*60*1000;                   // Dev-режим выключается после 20 минут бездействия и при выходе из профиля
+const $ = id => document.getElementById(id);
+const CODE_ITER = 100000;
+const DEFAULT_TEACHERS = [];                         // пример: {name:"Иванов Иван", phone:"+992900123456", subjects:["fizika","algebra"]}
+const APP_INFO = { version:"1.2.0", updated:"2026-09-30", contact:{ telegram:"", email:"" } };  // впиши свой Telegram (без @) и e-mail для блока «О приложении»
+
+/* ---- crypto / rate-limit / registry ---- */
+function hasSubtle(){ return typeof crypto!=="undefined" && !!crypto.subtle && typeof TextEncoder!=="undefined"; }
+function hexToBytes(h){ return new Uint8Array((h.match(/../g)||[]).map(x=>parseInt(x,16))); }
+function bytesToHex(b){ return Array.from(b).map(x=>x.toString(16).padStart(2,"0")).join(""); }
+function randomHex(n){ const a=new Uint8Array(n); crypto.getRandomValues(a); return bytesToHex(a); }
+async function pbkdf2Hex(pw, saltHex, iter){
+  const key=await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveBits"]);
+  const bits=await crypto.subtle.deriveBits({name:"PBKDF2", hash:"SHA-256", salt:hexToBytes(saltHex), iterations:iter}, key, 256);
+  return bytesToHex(new Uint8Array(bits));
+}
+function gateStatus(key){
+  let o={}; try{ o=JSON.parse(localStorage.getItem("sch_fail_"+key)||"{}"); }catch(e){}
+  if(o.until && o.until>Date.now()) return {locked:true, min:Math.ceil((o.until-Date.now())/60000)};
+  return {locked:false};
+}
+function gateFail(key){
+  let o={n:0}; try{ o=JSON.parse(localStorage.getItem("sch_fail_"+key)||"{}"); }catch(e){}
+  if(o.until && o.until<=Date.now()) o={n:0};
+  o.n=(o.n||0)+1;
+  if(o.n>=5){ o.until=Date.now()+10*60000; o.n=0; }
+  localStorage.setItem("sch_fail_"+key, JSON.stringify(o));
+}
+function gateReset(key){ localStorage.removeItem("sch_fail_"+key); }
+function jsonList(key){ try{ const a=JSON.parse(localStorage.getItem(key)||"[]"); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
+function localCodes(){ return jsonList("sch_codes"); }
+function revokedIds(){ return jsonList("sch_codes_revoked"); }
+function validEntry(e){ return !!(e && typeof e.id==="string" && typeof e.salt==="string" && typeof e.hash==="string" && STAFF_ROLES.includes(e.role)); }
+function registryAll(){
+  const map=new Map();
+  STAFF_CODES.concat(localCodes()).forEach(e=>{ if(validEntry(e)) map.set(e.id, e); });
+  revokedIds().forEach(id=>map.delete(id));
+  return [...map.values()];
+}
+const CODE_ALPHABET="ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+function genCode(){
+  const a=new Uint8Array(12); crypto.getRandomValues(a);
+  let s=""; a.forEach(x=>{ s+=CODE_ALPHABET[x%CODE_ALPHABET.length]; });
+  return s.slice(0,4)+"-"+s.slice(4,8)+"-"+s.slice(8,12);
+}
+function normCode(c){ return String(c||"").toUpperCase().replace(/[^A-Z0-9]/g,""); }
+async function createCode(role, label){
+  const code=genCode(), salt=randomHex(16);
+  const entry={ id:"c"+Date.now().toString(36)+randomHex(2), role, label, salt, iter:CODE_ITER, hash:await pbkdf2Hex(normCode(code), salt, CODE_ITER), created:Date.now() };
+  const list=localCodes(); list.push(entry);
+  localStorage.setItem("sch_codes", JSON.stringify(list));
+  return code;
+}
+function deleteCode(id){
+  localStorage.setItem("sch_codes", JSON.stringify(localCodes().filter(e=>e.id!==id)));
+  if(STAFF_CODES.some(e=>e.id===id)){ const r=revokedIds(); if(!r.includes(id)){ r.push(id); localStorage.setItem("sch_codes_revoked", JSON.stringify(r)); } }
+}
+async function verifyStaffCode(code, role){
+  if(!hasSubtle()) return {ok:false, reason:"secure"};
+  const g=gateStatus("staff"); if(g.locked) return {ok:false, reason:"locked", min:g.min};
+  const c=normCode(code); if(!c) return {ok:false, reason:"empty"};
+  let matched=null;
+  for(const e of registryAll()){ if(await pbkdf2Hex(c, e.salt, e.iter||CODE_ITER)===e.hash){ matched=e; break; } }
+  if(!matched){ gateFail("staff"); return {ok:false, reason:"wrong"}; }
+  if(matched.role!==role) return {ok:false, reason:"role"};
+  gateReset("staff");
+  return {ok:true, entry:matched};
+}
+async function verifyDev(code){
+  if(!hasSubtle()) return {ok:false, reason:"secure"};
+  const g=gateStatus("dev"); if(g.locked) return {ok:false, reason:"locked", min:g.min};
+  if(!code) return {ok:false, reason:"empty"};
+  const h=await pbkdf2Hex(code, AUTH.DEV.salt, AUTH.DEV.iter);
+  if(h===AUTH.DEV.hash){ gateReset("dev"); return {ok:true}; }
+  gateFail("dev"); return {ok:false, reason:"wrong"};
+}
+function codeErrText(res){
+  const t=UI[lang];
+  switch(res.reason){
+    case "locked": return t.lockedTry.replace("{m}", res.min);
+    case "secure": return t.needSecure;
+    case "role":   return t.codeRoleMismatch;
+    case "empty":  return t.codeNeed;
+    default:       return t.codeWrong;
+  }
+}
+function fmtDate(ts){ const d=new Date(ts); return pad2(d.getDate())+"."+pad2(d.getMonth()+1)+"."+d.getFullYear(); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+let lang = localStorage.getItem("sch_lang") || "tg";   // TJ — основной язык при запуске (порядок кнопок: TJ, RU, EN)
+let theme = localStorage.getItem("sch_theme") || "classic";
+let rainSound = localStorage.getItem("sch_rainsound") === "1";
+let transparentBg = localStorage.getItem("sch_transbg") === "1";
+let selectedDay = new Date().getDay(); if(selectedDay===0) selectedDay=6;
+let focusMode = localStorage.getItem("sch_focus")!=="0";   // по умолчанию: только прошлый/текущий/следующий урок
+let showAllToday = false;
+let activeTab = "home";
+let prevTab = "home";
+
+/* ============ account (device-local storage) ============ */
+let profile = JSON.parse(localStorage.getItem("sch_profile")||"null");
+let guestData = JSON.parse(localStorage.getItem("sch_guest_data")||"null");
+let formMode=null, formRole=null;   // formMode: null | "role" | "form" | "guest"
+let loggedOut = localStorage.getItem("sch_loggedout")==="1";
+if(profile && profile.role==="homeroom") profile.role="teacher";
+if(guestData) guestData.role="student";   // гость — всегда ученик
+
+function isDev(){ return Number(localStorage.getItem("sch_dev_until")||0) > Date.now(); }
+try{ localStorage.removeItem("sch_dev"); }catch(e){}
+function isRegistered(){ return !!(profile && !loggedOut); }
+/* «Занг» и «Муаллимон» открываются только после регистрации (или в Dev-режиме) */
+function canAccess(id){ if(id!=="bells" && id!=="teachers") return true; return isRegistered() || isDev(); }
+function canEditTeachers(){
+  if(isDev()) return true;
+  if(!isRegistered()) return false;
+  return STAFF_ROLES.includes(profile.role) && profile.staffVerified===true;
+}
+function pad2(n){ return (n<10?"0":"")+n; }
+function uid(){ return "t"+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+/* ---- свой диалог подтверждения (confirm() в WebView/APK и в песочницах всегда возвращает false) ---- */
+function askConfirm(message, okText, danger){
+  return new Promise(resolve=>{
+    const t=UI[lang], back=document.createElement("div"), prevFocus=document.activeElement;
+    back.className="modal-back";
+    back.innerHTML=`<div class="modal" role="dialog" aria-modal="true"><p>${esc(message)}</p><div class="modal-actions"><button class="btn btn-ghost" id="askCancel" type="button">${esc(t.cancel)}</button><button class="btn ${danger?"btn-danger":"btn-primary"}" id="askOk" type="button">${esc(okText||t.ok)}</button></div></div>`;
+    document.body.appendChild(back);
+    requestAnimationFrame(()=>back.classList.add("show"));
+    const onKey=e=>{ if(e.key==="Escape"){ e.preventDefault(); done(false); } };
+    function done(v){
+      document.removeEventListener("keydown", onKey, true);
+      back.classList.remove("show"); setTimeout(()=>back.remove(), 240);
+      try{ if(prevFocus && prevFocus.focus) prevFocus.focus(); }catch(e){}
+      resolve(v);
+    }
+    document.addEventListener("keydown", onKey, true);
+    back.onclick=e=>{ if(e.target===back) done(false); };
+    back.querySelector("#askCancel").onclick=()=>done(false);
+    back.querySelector("#askOk").onclick=()=>done(true);
+    setTimeout(()=>{ const f=back.querySelector(danger?"#askCancel":"#askOk"); if(f) f.focus(); }, 40);
+  });
+}
+
+/* телефон: только +992 (9 цифр) или +7 (10 цифр). "" — пусто, null — неверный */
+function normPhone(raw){
+  let s=String(raw==null?"":raw).trim(); if(!s) return "";
+  let d=s.replace(/[^\d+]/g,"");
+  if(d.startsWith("00")) d="+"+d.slice(2);
+  if(!d.startsWith("+")){
+    if(/^992\d{9}$/.test(d)) d="+"+d;
+    else if(/^7\d{10}$/.test(d)) d="+"+d;
+    else if(/^8\d{10}$/.test(d)) d="+7"+d.slice(1);
+  }
+  return (/^\+992\d{9}$/.test(d) || /^\+7\d{10}$/.test(d)) ? d : null;
+}
+function fmtPhone(p){
+  if(/^\+992\d{9}$/.test(p)) return "+992 "+p.slice(4,7)+" "+p.slice(7,9)+" "+p.slice(9,11)+" "+p.slice(11,13);
+  if(/^\+7\d{10}$/.test(p)) return "+7 "+p.slice(2,5)+" "+p.slice(5,8)+" "+p.slice(8,10)+" "+p.slice(10,12);
+  return p;
+}
+function normTxt(s){ return String(s).toLowerCase().replace(/ё/g,"е").replace(/[^\p{L}\p{N}]+/gu," ").trim(); }
+let SUBJ_MAP=null;
+function subjKey(txt){
+  if(!SUBJ_MAP){
+    SUBJ_MAP={};
+    Object.keys(S).forEach(k=>{ SUBJ_MAP[normTxt(k)]=k; ["tg","ru","en"].forEach(l=>{ SUBJ_MAP[normTxt(S[k][l])]=k; }); });
+  }
+  return SUBJ_MAP[normTxt(txt)]||null;
+}
+function normBorn(v){ const y=Math.round(Number(v)); const max=new Date().getFullYear()-16; return (y>=1930 && y<=max) ? y : 0; }
+function normTeacher(x){
+  const subs = Array.isArray(x.subjects) ? x.subjects.map(String) : (x.subject ? [String(x.subject)] : []);
+  return {id:(typeof x.id==="string" && x.id) ? x.id : uid(), name:String(x.name||"").trim(), phone:normPhone(x.phone)||"", subjects:subs, added:Number(x.added)||0, born:normBorn(x.born)};
+}
+function loadTeachers(){
+  try{
+    const raw=localStorage.getItem("sch_teachers");
+    if(raw){
+      const a=JSON.parse(raw);
+      if(Array.isArray(a)){
+        const res=a.map(normTeacher);
+        if(a.some(x=>!x || typeof x.id!=="string")){ try{ localStorage.setItem("sch_teachers", JSON.stringify(res)); }catch(e){} }   // закрепляем id у старых записей
+        return res;
+      }
+    }
+  }catch(e){}
+  return DEFAULT_TEACHERS.map(normTeacher);
+}
+let teachersData = loadTeachers();
+let tEditId = null;
+let pendingImport = null;
+let tSort = localStorage.getItem("sch_tsort") || "default";
+function saveTeachers(){
+  localStorage.setItem("sch_teachers", JSON.stringify(teachersData));
+  localStorage.setItem("sch_teachers_ts", String(Date.now()));
+}
+function subjLabel(k){ return S[k] ? S[k][lang] : k; }
+
+/* ---- сортировка / фильтр ---- */
+const SORT_MODES=["default","az","za","new","old","ageold","ageyoung"];
+function sortModesFor(editable){ return editable ? SORT_MODES : SORT_MODES.slice(0,5); }       // возраст — только для завуча/директора/Dev
+function effSort(editable){ return sortModesFor(editable).includes(tSort) ? tSort : "default"; }
+const COLL=(()=>{ try{ return new Intl.Collator(["ru","tg"],{sensitivity:"base", numeric:true}); }catch(e){ return {compare:(x,y)=>x.localeCompare(y)}; } })();
+function sortedTeachers(editable){
+  const arr=teachersData.slice(), byName=(x,y)=>COLL.compare(x.name,y.name);
+  switch(effSort(editable)){
+    case "az": arr.sort(byName); break;
+    case "za": arr.sort((x,y)=>byName(y,x)); break;
+    case "new": arr.sort((x,y)=>y.added-x.added); break;
+    case "old": arr.sort((x,y)=>x.added-y.added); break;
+    case "ageold":   arr.sort((x,y)=>(x.born||9999)-(y.born||9999)); break;     // без года рождения — в конец
+    case "ageyoung": arr.sort((x,y)=>(y.born||0)-(x.born||0)); break;
+  }
+  return arr;
+}
+function buildSortMenu(editable){
+  const t=UI[lang], menu=$("sortMenu"), btn=$("sortBtn"), cur=effSort(editable);
+  const label={default:t.sortDefault, az:t.sortAZ, za:t.sortZA, new:t.sortNew, old:t.sortOld, ageold:t.sortAgeOld, ageyoung:t.sortAgeYoung};
+  const check='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  menu.innerHTML=`<div class="sm-title">${esc(t.sortTitle)}</div>`+sortModesFor(editable).map(m=>`<button type="button" role="menuitemradio" aria-checked="${m===cur}" class="sm-item${m===cur?" on":""}" data-m="${m}"><span>${esc(label[m])}</span>${check}</button>`).join("");
+  btn.classList.toggle("active", cur!=="default");
+  btn.setAttribute("aria-label", t.sortTitle);
+  btn.onclick=e=>{ e.stopPropagation(); const open=!menu.classList.contains("open"); menu.classList.toggle("open", open); btn.setAttribute("aria-expanded", String(open)); };
+  menu.onclick=e=>e.stopPropagation();
+  menu.querySelectorAll(".sm-item").forEach(it=>{
+    it.onclick=()=>{ tSort=it.dataset.m; localStorage.setItem("sch_tsort", tSort); menu.classList.remove("open"); btn.setAttribute("aria-expanded","false"); buildSortMenu(editable); renderTeachersList(editable); };
+  });
+}
+function closeSortMenu(){ const m=document.getElementById("sortMenu"), b=document.getElementById("sortBtn"); if(m) m.classList.remove("open"); if(b) b.setAttribute("aria-expanded","false"); }
+document.addEventListener("click", closeSortMenu);
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeSortMenu(); });
+
+/* ---- закрытые разделы ---- */
+const LOCK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>';
+function renderGate(tab){
+  const t=UI[lang], el=$("gate-"+tab), sec=t[TABS.find(x=>x.id===tab).key], returning=!!(profile && loggedOut);
+  el.innerHTML=`<div class="gate-ic">${LOCK_SVG}</div><div class="gate-title">${esc(t.gateTitle)}</div><div class="gate-body">${esc((returning?t.gateBodyIn:t.gateBody).replace("{sec}", sec))}</div><button class="btn btn-primary" id="gateBtn-${tab}" type="button">${esc(returning?t.gateIn:t.gateReg)}</button>`;
+  $("gateBtn-"+tab).onclick=()=>{ activeTab="profile"; formMode = returning ? null : "role"; formRole=null; render(); animateView(1); };
+}
+function renderBellsView(){
+  const locked=!canAccess("bells"); $("view-bells").classList.toggle("locked", locked);
+  if(locked){ $("shift1List").innerHTML=""; $("shift2List").innerHTML=""; renderGate("bells"); return; }
+  renderBellsList($("shift1List"), TIMES); renderBellsList($("shift2List"), SHIFT2_TIMES);
+}
+
+/* ---- файл со списком: ФИО - телефон - предметы - год рождения ---- */
+function bornFromField(f){
+  let m;
+  if((m=f.match(/^(19[3-9]\d|20[01]\d)\s*(?:г\.?\s*р?\.?|y|йил)?$/i))) return normBorn(m[1]);
+  if((m=f.match(/^\d{1,2}[./-]\d{1,2}[./-](19[3-9]\d|20[01]\d)$/))) return normBorn(m[1]);
+  if((m=f.match(/^(\d{2})\s*(?:лет|года?|год|сол|y|yrs?|years?)$/i))){ const a=+m[1]; if(a>=20 && a<=85) return normBorn(new Date().getFullYear()-a); }
+  return 0;
+}
+function parseTeachersText(text){
+  text=String(text).replace(/^\uFEFF/,"");
+  const t0=text.trim();
+  if(t0[0]==="{" || t0[0]==="["){
+    try{
+      const o=JSON.parse(t0), arr=Array.isArray(o)?o:o.teachers;
+      if(Array.isArray(arr)) return {items:arr.map(normTeacher).filter(x=>x.name), errors:[]};
+    }catch(e){}
+  }
+  const HDR=["фио","ф и о","name","full name","ному насаб","фамилия имя отчество","фамилия"];
+  const items=[], errors=[];
+  text.split(/\r?\n/).forEach((raw,idx)=>{
+    const line=raw.trim();
+    if(!line || line[0]==="#") return;
+    const sep = /[\t;|]/.test(line) ? /[\t;|]/ : /\s[-–—]\s/;
+    let parts=line.split(sep).map(x=>x.trim()).filter(Boolean);
+    if(!parts.length) return;
+    if(parts.slice(0,2).some(x=>HDR.includes(normTxt(x)))) return;                 // строка-шапка
+    if(parts.length>1 && /^\d{1,3}[.)]?$/.test(parts[0])) parts.shift();          // столбец «№»
+    const name=parts[0].replace(/^\d{1,3}[.)]\s+/,"").trim();
+    let phone="", subs=[], why=null, born=0;
+    parts.slice(1).forEach(f=>{
+      const by=bornFromField(f); if(by){ born=by; return; }
+      const digits=(f.match(/\d/g)||[]).length;
+      if(/^\+?[\d\s().\-]{6,}$/.test(f) && digits>=7){
+        const p=normPhone(f);
+        if(p===null) why=why||"phone"; else if(p && !phone) phone=p;
+      } else {
+        f.split(/[,،;/]+/).map(s=>s.trim()).filter(Boolean).forEach(s=>subs.push(s));
+      }
+    });
+    if(!/\p{L}/u.test(name) || name.length<2) why=why||"name";
+    if(!why && !phone) why="nophone";
+    if(!why && !subs.length) why="subj";
+    if(why){ errors.push({n:idx+1, why}); return; }
+    const keys=[]; subs.forEach(s=>{ const k=subjKey(s)||s; if(!keys.includes(k)) keys.push(k); });
+    items.push({name, phone, subjects:keys, born});
+  });
+  return {items, errors};
+}
+function teachersToText(list){
+  const head="# "+UI[lang].sampleComment;
+  return head+"\n"+list.map(x=>[x.name].concat(x.phone?[fmtPhone(x.phone)]:[]).concat([x.subjects.map(subjLabel).join(", ")]).concat(x.born?[String(x.born)]:[]).join(" - ")).join("\n")+"\n";
+}
+function sampleText(){
+  return "# "+UI[lang].sampleComment+"\nИванов Иван Иванович - +7 999 123 45 67 - Физика, Алгебра - 1978\nРахимова Мадина - +992 900 12 34 56 - Забони тоҷикӣ, Адабиёт\n";
+}
+function downloadText(fileName, text){
+  const blob=new Blob(["\uFEFF"+text],{type:"text/plain;charset=utf-8"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=fileName;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500);
+}
+function decodeBuffer(buf){
+  if(typeof TextDecoder==="undefined") return "";
+  try{ return new TextDecoder("utf-8",{fatal:true}).decode(buf); }
+  catch(e){ try{ return new TextDecoder("windows-1251").decode(buf); }catch(e2){ return new TextDecoder("utf-8").decode(buf); } }
+}
+
+/* ---- чтение Word / Excel / OpenDocument / RTF / HTML без внешних библиотек ---- */
+function readBuf(f){
+  if(f.arrayBuffer) return f.arrayBuffer();
+  return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=()=>rej(new Error("read")); r.readAsArrayBuffer(f); });
+}
+function utf8(u8){ return new TextDecoder("utf-8").decode(u8); }
+function xmlDoc(str){ return new DOMParser().parseFromString(str, "application/xml"); }
+async function unzip(u8){
+  const dv=new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+  let eocd=-1;
+  for(let i=u8.length-22; i>=Math.max(0,u8.length-65557); i--){ if(dv.getUint32(i,true)===0x06054b50){ eocd=i; break; } }
+  if(eocd<0) throw new Error("zip");
+  const total=dv.getUint16(eocd+10,true), files={};
+  let p=dv.getUint32(eocd+16,true);
+  for(let n=0;n<total;n++){
+    if(dv.getUint32(p,true)!==0x02014b50) break;
+    const method=dv.getUint16(p+10,true), csize=dv.getUint32(p+20,true), nlen=dv.getUint16(p+28,true), elen=dv.getUint16(p+30,true), clen=dv.getUint16(p+32,true), lho=dv.getUint32(p+42,true);
+    files[utf8(u8.subarray(p+46,p+46+nlen))]={method,csize,lho};
+    p+=46+nlen+elen+clen;
+  }
+  async function read(name){
+    const f=files[name]; if(!f) return null;
+    const start=f.lho+30+dv.getUint16(f.lho+26,true)+dv.getUint16(f.lho+28,true), data=u8.subarray(start,start+f.csize);
+    if(f.method===0) return data;
+    if(f.method===8){
+      if(typeof DecompressionStream==="undefined") throw new Error("nostream");
+      const stream=new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+      return new Uint8Array(await new Response(stream).arrayBuffer());
+    }
+    throw new Error("zip");
+  }
+  return {names:Object.keys(files), read};
+}
+function docxToText(xml){
+  const W="http://schemas.openxmlformats.org/wordprocessingml/2006/main", d=xmlDoc(xml), body=d.getElementsByTagNameNS(W,"body")[0];
+  if(!body) return "";
+  const pText=p=>{ let s=""; (function walk(n){ for(const c of n.childNodes){ if(c.nodeType!==1) continue; const ln=c.localName;
+      if(ln==="t") s+=c.textContent; else if(ln==="tab") s+="\t"; else if(ln==="br"||ln==="cr") s+="\n"; else walk(c); } })(p); return s; };
+  const out=[];
+  (function block(parent){
+    for(const c of parent.childNodes){
+      if(c.nodeType!==1) continue;
+      if(c.localName==="p") out.push(pText(c));
+      else if(c.localName==="tbl"){
+        for(const tr of c.childNodes){ if(tr.localName!=="tr") continue;
+          const cells=[]; for(const tc of tr.childNodes){ if(tc.localName!=="tc") continue;
+            const ps=[]; for(const pp of tc.childNodes){ if(pp.localName==="p") ps.push(pText(pp)); }
+            cells.push(ps.map(x=>x.trim()).filter(Boolean).join(", ")); }
+          out.push(cells.join("\t")); }
+      } else if(c.localName==="sdt" || c.localName==="sdtContent") block(c);
+    }
+  })(body);
+  return out.join("\n");
+}
+function colIndex(ref){ const m=/^[A-Z]+/i.exec(ref||""); if(!m) return 0; let n=0; for(const ch of m[0].toUpperCase()) n=n*26+(ch.charCodeAt(0)-64); return n-1; }
+async function xlsxToText(zip){
+  const sst=await zip.read("xl/sharedStrings.xml"), strings=[];
+  if(sst){ for(const si of xmlDoc(utf8(sst)).getElementsByTagName("si")) strings.push([...si.getElementsByTagName("t")].map(x=>x.textContent).join("")); }
+  let sheet="xl/worksheets/sheet1.xml";
+  try{
+    const wb=xmlDoc(utf8(await zip.read("xl/workbook.xml"))), first=wb.getElementsByTagName("sheet")[0];
+    const rid=first && (first.getAttribute("r:id") || first.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships","id"));
+    const rels=xmlDoc(utf8(await zip.read("xl/_rels/workbook.xml.rels")));
+    for(const r of rels.getElementsByTagName("Relationship")){ if(r.getAttribute("Id")===rid){ const tg=r.getAttribute("Target"); sheet = tg.startsWith("/") ? tg.slice(1) : "xl/"+tg.replace(/^\.\//,""); } }
+  }catch(e){}
+  const sx=(await zip.read(sheet)) || (await zip.read("xl/worksheets/sheet1.xml"));
+  if(!sx) return "";
+  const rows=[];
+  for(const row of xmlDoc(utf8(sx)).getElementsByTagName("row")){
+    const cells=[];
+    for(const c of row.getElementsByTagName("c")){
+      const t=c.getAttribute("t"), v=c.getElementsByTagName("v")[0]; let val="";
+      if(t==="s" && v) val=strings[+v.textContent]||"";
+      else if(t==="inlineStr") val=[...c.getElementsByTagName("t")].map(x=>x.textContent).join("");
+      else if(v){ val=v.textContent; if(/^-?\d+(\.\d+)?[eE][+-]?\d+$/.test(val)) val=Number(val).toFixed(0); }
+      cells[colIndex(c.getAttribute("r"))]=val;
+    }
+    rows.push(Array.from(cells, x=>x==null?"":x).join("\t"));
+  }
+  return rows.join("\n");
+}
+function odfToText(xml){
+  const NT="urn:oasis:names:tc:opendocument:xmlns:text:1.0", NB="urn:oasis:names:tc:opendocument:xmlns:table:1.0", NO="urn:oasis:names:tc:opendocument:xmlns:office:1.0";
+  const body=xmlDoc(xml).getElementsByTagNameNS(NO,"body")[0]; if(!body) return "";
+  const pt=n=>{ let s=""; (function walk(x){ for(const c of x.childNodes){ if(c.nodeType===3) s+=c.nodeValue; else if(c.nodeType===1){ if(c.localName==="tab") s+="\t"; else if(c.localName==="line-break") s+="\n"; else if(c.localName==="s") s+=" "; else walk(c); } } })(n); return s; };
+  const out=[];
+  (function block(par){
+    for(const c of par.childNodes){
+      if(c.nodeType!==1) continue;
+      if(c.localName==="p" || c.localName==="h") out.push(pt(c));
+      else if(c.localName==="table"){
+        for(const tr of c.getElementsByTagNameNS(NB,"table-row")){
+          const cells=[]; for(const tc of tr.childNodes){ if(tc.localName!=="table-cell") continue;
+            const rep=Math.min(Number(tc.getAttributeNS(NB,"number-columns-repeated")||1),30), txt=[...tc.getElementsByTagNameNS(NT,"p")].map(pt).join(", ").trim();
+            for(let k=0;k<rep;k++) cells.push(txt); }
+          out.push(cells.join("\t")); }
+      } else block(c);
+    }
+  })(body);
+  return out.join("\n");
+}
+function htmlToText(s){
+  const prepared=s.replace(/<\/(td|th)>/gi,"\t$&").replace(/<\/(tr|p|div|li|h\d)>/gi,"\n$&").replace(/<br\s*\/?>/gi,"\n");
+  const d=new DOMParser().parseFromString(prepared,"text/html"); return d.body ? d.body.textContent : "";
+}
+function rtfToText(s){
+  const cp=/\\ansicpg1251/.test(s);
+  let prev; do{ prev=s; s=s.replace(/\{\\(?:\*\\)?(?:fonttbl|colortbl|stylesheet|info|pict|header|footer)\b[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g,""); }while(s!==prev);
+  s=s.replace(/\\par\b ?/g,"\n").replace(/\\tab\b ?/g,"\t").replace(/\\(?:cell|nestcell)\b ?/g,"\t").replace(/\\(?:row|nestrow)\b ?/g,"\n").replace(/\\line\b ?/g,"\n");
+  s=s.replace(/\\u(-?\d+)\??/g,(m,n)=>String.fromCharCode(n<0?+n+65536:+n));
+  s=s.replace(/\\'([0-9a-f]{2})/gi,(m,h)=>{ const c=parseInt(h,16); if(cp){ try{ return new TextDecoder("windows-1251").decode(new Uint8Array([c])); }catch(e){} } return String.fromCharCode(c); });
+  return s.replace(/\\[a-z]+-?\d* ?/gi,"").replace(/\\([\\{}])/g,"$1").replace(/[{}]/g,"");
+}
+async function readTeachersFile(buf){
+  const u8=new Uint8Array(buf), sig=(...b)=>b.every((x,i)=>u8[i]===x);
+  if(sig(0x50,0x4B,0x03,0x04)){
+    const zip=await unzip(u8), n=zip.names;
+    if(n.includes("word/document.xml")) return {text:docxToText(utf8(await zip.read("word/document.xml")))};
+    if(n.includes("xl/workbook.xml")) return {text:await xlsxToText(zip)};
+    if(n.includes("content.xml")) return {text:odfToText(utf8(await zip.read("content.xml")))};
+    return {note:"impUnsupported_zip"};
+  }
+  if(sig(0x25,0x50,0x44,0x46)) return {note:"impUnsupported_pdf"};
+  if(sig(0xD0,0xCF,0x11,0xE0)) return {note:"impUnsupported_ole"};
+  let text=decodeBuffer(buf); const head=text.slice(0,300).trim();
+  if(/^\{\\rtf/i.test(head)) text=rtfToText(text);
+  else if(/^<(!doctype|html|table|\?xml|body)/i.test(head)) text=htmlToText(text);
+  return {text};
+}
+
+/* ---- вкладка «Муаллимон» ---- */
+function rende
